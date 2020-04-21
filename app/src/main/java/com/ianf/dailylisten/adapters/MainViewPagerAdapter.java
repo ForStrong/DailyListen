@@ -19,6 +19,7 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        //fragment的位置和indicator是一致的，通过绑定完成
         return FragmentCreator.getFragment(position);
     }
 

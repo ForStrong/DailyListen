@@ -13,7 +13,7 @@ import java.util.Map;
 *create by IANDF in 2020/4/21
  *lastTime:
  *@description: 用来创建和存储fragment
- *@usage: 通过getFragment(int index)返回fragment
+ *@usage: 通过getFragment(int index)返回fragment,用于viewPager切换fragment
 */
 public  class FragmentCreator {
 

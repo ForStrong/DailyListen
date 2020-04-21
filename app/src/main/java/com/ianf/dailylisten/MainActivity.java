@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         //init indicator
         magicIndicator.setBackgroundColor(getResources().getColor(R.color.main_color));
         CommonNavigator commonNavigator = new CommonNavigator(this);
-        IndicatorAdapter adapter = new IndicatorAdapter(this);
+        IndicatorAdapter adapter = new IndicatorAdapter(this,viewPager);
         commonNavigator.setAdapter(adapter);
         //根据控件宽度自动调节Item的位置,平分宽度
         commonNavigator.setAdjustMode(true);

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.ianf.dailylisten.R;
 
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
@@ -23,8 +25,10 @@ import java.util.List;
 */
 public class IndicatorAdapter extends CommonNavigatorAdapter {
     private List<String> mList;
-    public IndicatorAdapter(Context context) {
+    private ViewPager mViewPager;
+    public IndicatorAdapter(Context context, ViewPager viewPager) {
         mList = Arrays.asList(context.getResources().getStringArray(R.array.main_title));
+        mViewPager = viewPager;
     }
 
     @Override
@@ -45,7 +49,7 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
         simplePagerTitleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //mViewPager.setCurrentItem(index);
+                mViewPager.setCurrentItem(index);
             }
         });
         return simplePagerTitleView;
