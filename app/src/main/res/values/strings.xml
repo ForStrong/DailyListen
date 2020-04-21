@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">DailyListen</string>
+
+    <string-array name="main_title">
+        <item>推荐</item>
+        <item>订阅</item>
+        <item>历史</item>
+    </string-array>
 </resources>
