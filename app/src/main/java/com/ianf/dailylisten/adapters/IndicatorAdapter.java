@@ -15,7 +15,12 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Simple
 
 import java.util.Arrays;
 import java.util.List;
-
+/**
+*create by IANDF in 2020/4/21
+ *lastTime:
+ *@description: MagicIndicator的适配器，indicator根据adapter调节顶部item
+ *@usage:
+*/
 public class IndicatorAdapter extends CommonNavigatorAdapter {
     private List<String> mList;
     public IndicatorAdapter(Context context) {
@@ -35,6 +40,7 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
         SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
         simplePagerTitleView.setNormalColor(Color.GRAY);
         simplePagerTitleView.setSelectedColor(Color.WHITE);
+        simplePagerTitleView.setTextSize(18);
         simplePagerTitleView.setText(mList.get(index));
         simplePagerTitleView.setOnClickListener(new View.OnClickListener() {
             @Override
