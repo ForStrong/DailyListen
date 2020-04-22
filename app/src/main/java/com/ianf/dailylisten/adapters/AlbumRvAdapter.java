@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ianf.dailylisten.R;
+import com.ianf.dailylisten.views.RoundTransform;
 import com.squareup.picasso.Picasso;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -82,7 +83,7 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
             //把图片URL通过Picasso添加到imageView中
             String coverUrlLarge = album.getCoverUrlLarge();
             if (!TextUtils.isEmpty(coverUrlLarge)){
-                Picasso.with(itemView.getContext()).load(coverUrlLarge).into(mAlbumCoverIv);
+                Picasso.with(itemView.getContext()).load(coverUrlLarge).transform(new RoundTransform()).into(mAlbumCoverIv);
             }else {
                 mAlbumCoverIv.setImageResource(R.mipmap.ximalay_logo);
             }
