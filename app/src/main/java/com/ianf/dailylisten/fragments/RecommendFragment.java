@@ -8,20 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ianf.dailylisten.Presenters.RecommendPresenter;
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.adapters.AlbumRvAdapter;
 import com.ianf.dailylisten.base.BaseFragment;
-import com.ianf.dailylisten.utils.Constants;
-import com.ianf.dailylisten.utils.LogUtil;
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
-import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
+import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
-import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
 *create by IANDF in 2020/4/22
@@ -33,18 +27,24 @@ import java.util.Map;
 /*
     1. 通过sdk提供的接口获取数据获取数据
  */
-public class RecommendFragment extends BaseFragment {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView mAlbum_rv;
     private AlbumRvAdapter mAlbumRvAdapter;
+    private RecommendPresenter mPresenter;
 
 
     @Override
     protected View onSubViewLoad(LayoutInflater inflater, ViewGroup container) {
         mRootView = inflater.inflate(R.layout.fragment_recommend,container,false);
         initView();
-        getCommendData();
+        //创建Presenter
+        mPresenter = RecommendPresenter.getInstance();
+        //注册回调接口
+        mPresenter.registerCallback(this);
+        //加载数据
+        mPresenter.loadData();
         return mRootView;
     }
 
@@ -61,33 +61,17 @@ public class RecommendFragment extends BaseFragment {
         mAlbum_rv.setAdapter(mAlbumRvAdapter);
     }
 
-    /**
-    *description: 根据api 3.10.6 获取猜你喜欢数据
-    *usage:
-    */
-    private void getCommendData() {
-        Map<String, String> specificParams = new HashMap<>();
-        specificParams.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT.toString());
-        CommonRequest.getGuessLikeAlbum(specificParams, new IDataCallBack<GussLikeAlbumList>() {
-            //回调接口已经是主线程了可以更新rv的UI
-            @Override
-            public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
-                if (gussLikeAlbumList != null) {
-                    List<Album> albumList = gussLikeAlbumList.getAlbumList();
-                    if (albumList != null) {
-                        LogUtil.d(TAG,"size -> "+albumList.size());
-                        //把请求回来的数据数据传给Rv_adapter
-                        mAlbumRvAdapter.setData(albumList);
 
-                    }
-                }
-            }
 
-            @Override
-            public void onError(int i, String s) {
-                LogUtil.d(TAG,"error ->"+ i +"errorMsg ->"+s);
-            }
-        });
+    @Override
+    public void onRecommendListLoaded(List<Album> albumList) {
+        mAlbumRvAdapter.setData(albumList);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //注销回调接口
+        mPresenter.unRegisterCallback(this);
+    }
 }
