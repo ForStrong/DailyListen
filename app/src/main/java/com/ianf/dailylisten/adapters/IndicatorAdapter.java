@@ -41,25 +41,29 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
 
     @Override
     public IPagerTitleView getTitleView(Context context, final int index) {
-        SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
-        simplePagerTitleView.setNormalColor(Color.GRAY);
-        simplePagerTitleView.setSelectedColor(Color.WHITE);
-        simplePagerTitleView.setTextSize(18);
-        simplePagerTitleView.setText(mList.get(index));
-        simplePagerTitleView.setOnClickListener(new View.OnClickListener() {
+        //创建view
+        ColorTransitionPagerTitleView colorTransitionPagerTitleView = new ColorTransitionPagerTitleView(context);
+        //设置一般情况下的颜色为灰色
+        colorTransitionPagerTitleView.setNormalColor(Color.parseColor("#aaffffff"));
+        //设置选中情况下的颜色为黑色
+        colorTransitionPagerTitleView.setSelectedColor(Color.parseColor("#ffffff"));
+        //设置字体大小，单位sp
+        colorTransitionPagerTitleView.setTextSize(18);
+        colorTransitionPagerTitleView.setText(mList.get(index));
+        colorTransitionPagerTitleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mViewPager.setCurrentItem(index);
             }
         });
-        return simplePagerTitleView;
+        return colorTransitionPagerTitleView;
     }
 
     @Override
     public IPagerIndicator getIndicator(Context context) {
         LinePagerIndicator linePagerIndicator = new LinePagerIndicator(context);
         linePagerIndicator.setMode(LinePagerIndicator.MODE_WRAP_CONTENT);
-        linePagerIndicator.setColors(Color.WHITE);
+        linePagerIndicator.setColors(Color.parseColor("#ffffff"));
         return linePagerIndicator;
     }
 }

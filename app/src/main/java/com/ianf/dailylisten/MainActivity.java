@@ -32,15 +32,20 @@ public class MainActivity extends AppCompatActivity {
         //init indicator
         magicIndicator.setBackgroundColor(getResources().getColor(R.color.main_color));
         CommonNavigator commonNavigator = new CommonNavigator(this);
+        //自定义Indicator适配器
         IndicatorAdapter adapter = new IndicatorAdapter(this,viewPager);
+        //给CommonNavigator设置适配器
         commonNavigator.setAdapter(adapter);
         //根据控件宽度自动调节Item的位置,平分宽度
         commonNavigator.setAdjustMode(true);
+        //给Indicator设置导航栏
         magicIndicator.setNavigator(commonNavigator);
 
         //init viewPager
         FragmentManager fragmentManager = getSupportFragmentManager();
+        //自定义ViewPager适配器
         MainViewPagerAdapter viewPagerAdapter = new MainViewPagerAdapter(fragmentManager);
+        //给ViewPager设置适配器
         viewPager.setAdapter(viewPagerAdapter);
 
         //bind viewPager and indicator

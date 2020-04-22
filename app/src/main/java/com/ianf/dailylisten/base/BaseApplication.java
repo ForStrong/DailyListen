@@ -10,6 +10,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //集成喜马拉雅sdk
         CommonRequest mXimalaya = CommonRequest.getInstanse();
         if(DTransferConstants.isRelease) {
             String mAppSecret = "8646d66d6abe2efd14f2891f9fd1c8af";
@@ -23,6 +24,7 @@ public class BaseApplication extends Application {
             mXimalaya.init(this ,mAppSecret);
         }
 
+        //管理log，当发布时改isRelease = true
         LogUtil.init(this.getPackageName(),false);
     }
 }

@@ -20,17 +20,22 @@ public  class FragmentCreator {
     public final static int INDEX_RECOMMEND = 0;
     public final static int INDEX_SUBSCRIPTION = 1;
     public final static int INDEX_HISTORY = 2;
-
+    //fragment数量
     public final static int PAGE_COUNT = 3;
-
+    //hashMap保证元素的唯一性，便于对fragment进行缓存和切换
     @SuppressLint("UseSparseArrays")
     private static Map<Integer, BaseFragment> mFragmentMap = new HashMap<>();
-
+    /**
+    *description: 根据索引获取对应的Fragment
+    *usage:
+    */
     public static BaseFragment getFragment(int index){
         BaseFragment baseFragment = mFragmentMap.get(index);
+        //不为空直接获取
         if (baseFragment != null) {
            return baseFragment;
         }
+        //为空创建对应的fragment并加入map集合
         switch (index){
             case INDEX_RECOMMEND:
                 baseFragment = new RecommendFragment();
