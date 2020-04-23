@@ -24,7 +24,7 @@ import java.util.List;
  *@description: 推荐页面 mvp模式，在里面实现回调接口并让Presenter注册接口，这样model层代码改变时就调用接口中方法
  *@usage:
 */
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener  {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView mAlbum_rv;
@@ -46,6 +46,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         mPresenter = RecommendPresenter.getInstance();
         //注册回调接口
         mPresenter.registerCallback(this);
+        //注册网络错误时重新获取数据接口
+        mUiLoader.setOnRetryListener(this);
         //加载数据
         mPresenter.loadData();
         //android不允许多次绑定
@@ -69,6 +71,11 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         mAlbum_rv.setAdapter(mAlbumRvAdapter);
 
         return mRootView;
+    }
+
+    @Override
+    public void retryLoadData() {
+        mPresenter.loadData();
     }
 
 

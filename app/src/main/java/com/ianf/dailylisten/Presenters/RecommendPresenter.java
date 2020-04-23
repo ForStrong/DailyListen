@@ -4,6 +4,7 @@ import com.ianf.dailylisten.interfaces.IRecommendPresenter;
 import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
 import com.ianf.dailylisten.utils.Constants;
 import com.ianf.dailylisten.utils.LogUtil;
+import com.ianf.dailylisten.views.UILoader;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RecommendPresenter implements IRecommendPresenter {
+public class RecommendPresenter implements IRecommendPresenter{
     private static RecommendPresenter RECOMMEND_PRESENTER = null;
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
     private String TAG = "RecommendPresenter";
@@ -105,4 +106,6 @@ public class RecommendPresenter implements IRecommendPresenter {
             mCallbacks.remove(callback);
         }
     }
+
+
 }

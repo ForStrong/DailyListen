@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,8 @@ public abstract class UILoader extends FrameLayout {
     private View mLoadingView;
     private View mSuccessView;
     private View mEmptyView;
+
+    private OnRetryClickListener mRetryClickListener = null;
     //使用枚举列出各种状态
     public enum UIStatus{
         NETWORK_ERROR,LOADING,SUCCESS,EMPTY,NONE;
@@ -34,6 +37,7 @@ public abstract class UILoader extends FrameLayout {
     private UIStatus mCurrentStatus = UIStatus.NONE;
 
     public UILoader(@NonNull Context context) {
+        //使用this无论调用哪种构造方法都能调用本地初始化方法，简洁
         this(context,null);
     }
 
@@ -74,8 +78,6 @@ public abstract class UILoader extends FrameLayout {
             addView(mEmptyView);
         }
         mEmptyView.setVisibility((mCurrentStatus == UIStatus.EMPTY) ? VISIBLE : GONE);
-
-
     }
 
     private View getEmptyViewView() {
@@ -89,8 +91,18 @@ public abstract class UILoader extends FrameLayout {
     }
 
     private View getNetworkErrorView() {
-        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_network_error_view,this,false);
-
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_network_error_view, this, false);
+        ImageView networkErrorIv = view.findViewById(R.id.network_error_iv);
+        networkErrorIv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mRetryClickListener != null) {
+                    //重新获取数据
+                    mRetryClickListener.retryLoadData();
+                }
+            }
+        });
+        return view;
     }
 
     public void upDataUIStatus(UIStatus status){
@@ -103,6 +115,14 @@ public abstract class UILoader extends FrameLayout {
                 switchUIByStatus();
             }
         });
+    }
+    //fragment需要在网络错误时重新获取数据时实现该接口，并传入this注册该接口
+    public void setOnRetryListener(OnRetryClickListener retryListener){
+        mRetryClickListener = retryListener;
+    }
+    //定义重新获取数据内部接口，fragment需要在网络错误时重新获取数据时注册该接口
+    public interface OnRetryClickListener{
+        void retryLoadData();
     }
 
 
