@@ -1,12 +1,16 @@
 package com.ianf.dailylisten.base;
 
 import android.app.Application;
+import android.os.Handler;
 
 import com.ianf.dailylisten.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 
+
 public class BaseApplication extends Application {
+
+    private static Handler sHandler = null;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -26,5 +30,12 @@ public class BaseApplication extends Application {
 
         //管理log，当发布时改isRelease = true
         LogUtil.init(this.getPackageName(),false);
+
+        sHandler = new Handler();
     }
+
+    public static Handler getHandler(){
+        return sHandler;
+    }
+
 }

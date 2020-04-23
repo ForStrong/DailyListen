@@ -37,30 +37,51 @@ public class RecommendPresenter implements IRecommendPresenter {
      */
     @Override
     public void loadData() {
+        //UI为加载状态
+        for (IRecommendViewCallback callback: mCallbacks) {
+            callback.onLoading();
+        }
+
         Map<String, String> specificParams = new HashMap<>();
         specificParams.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT.toString());
         CommonRequest.getGuessLikeAlbum(specificParams, new IDataCallBack<GussLikeAlbumList>() {
             //回调接口已经是主线程了可以更新rv的UI
             @Override
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
-                if (gussLikeAlbumList != null) {
-                    List<Album> albumList = gussLikeAlbumList.getAlbumList();
-                    if (albumList != null) {
-                        LogUtil.d(TAG,"size -> "+albumList.size());
-                        //把请求回来的数据数据传给回调接口,只要是注冊过的都更新数据
-                        for (IRecommendViewCallback callback: mCallbacks) {
-                            callback.onRecommendListLoaded(albumList);
-                        }
-
-                    }
-                }
+                handleSuccess(gussLikeAlbumList);
             }
 
             @Override
             public void onError(int i, String s) {
                 LogUtil.d(TAG,"error ->"+ i +"errorMsg ->"+s);
+                handleError();
             }
         });
+    }
+    //更新UI为网络错误页面
+    private void handleError() {
+        for (IRecommendViewCallback callback: mCallbacks) {
+            callback.onNetworkError();
+        }
+    }
+    //处理返回数据成功的结果empty or success
+    private void handleSuccess(GussLikeAlbumList gussLikeAlbumList) {
+        if (gussLikeAlbumList != null) {
+            List<Album> albumList = gussLikeAlbumList.getAlbumList();
+            if (albumList != null) {
+                if (albumList.size() != 0) {
+                    LogUtil.d(TAG,"size -> "+albumList.size());
+                    //把请求回来的数据数据传给回调接口,只要是注冊过的都更新数据
+                    for (IRecommendViewCallback callback: mCallbacks) {
+                        callback.onRecommendListLoaded(albumList);
+                    }
+                }else{
+                    for (IRecommendViewCallback callback: mCallbacks) {
+                        callback.onEmpty();
+                    }
+                }
+            }
+        }
     }
 
     @Override

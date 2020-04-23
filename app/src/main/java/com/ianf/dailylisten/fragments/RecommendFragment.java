@@ -13,6 +13,7 @@ import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.adapters.AlbumRvAdapter;
 import com.ianf.dailylisten.base.BaseFragment;
 import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
+import com.ianf.dailylisten.views.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.List;
@@ -20,35 +21,42 @@ import java.util.List;
 /**
 *create by IANDF in 2020/4/22
  *lastTime:
- *@description:
+ *@description: 推荐页面 mvp模式，在里面实现回调接口并让Presenter注册接口，这样model层代码改变时就调用接口中方法
  *@usage:
 */
-
-/*
-    1. 通过sdk提供的接口获取数据获取数据
- */
 public class RecommendFragment extends BaseFragment implements IRecommendViewCallback {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView mAlbum_rv;
     private AlbumRvAdapter mAlbumRvAdapter;
     private RecommendPresenter mPresenter;
+    private UILoader mUiLoader;
 
 
     @Override
-    protected View onSubViewLoad(LayoutInflater inflater, ViewGroup container) {
-        mRootView = inflater.inflate(R.layout.fragment_recommend,container,false);
-        initView();
+    protected View onSubViewLoad(final LayoutInflater inflater, final ViewGroup container) {
+        mUiLoader = new UILoader(getContext()) {
+            @Override
+            public View getSuccessViewView() {
+                return initView(inflater,container);
+            }
+        };
+
         //创建Presenter
         mPresenter = RecommendPresenter.getInstance();
         //注册回调接口
         mPresenter.registerCallback(this);
         //加载数据
         mPresenter.loadData();
-        return mRootView;
+        //android不允许多次绑定
+        if (mUiLoader.getParent() instanceof ViewGroup) {
+            ((ViewGroup) mUiLoader.getParent()).removeView(mUiLoader);
+        }
+        return mUiLoader;
     }
 
-    private void initView() {
+    private View initView(LayoutInflater inflater, ViewGroup container) {
+        mRootView = inflater.inflate(R.layout.fragment_recommend,container,false);
         //初始化rv
         mAlbum_rv = mRootView.findViewById(R.id.album_rv);
         //设置recyclerView的布局
@@ -59,14 +67,33 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         mAlbumRvAdapter = new AlbumRvAdapter();
         //Rv设置adapter
         mAlbum_rv.setAdapter(mAlbumRvAdapter);
+
+        return mRootView;
     }
 
 
 
     @Override
     public void onRecommendListLoaded(List<Album> albumList) {
+        mUiLoader.upDataUIStatus(UILoader.UIStatus.SUCCESS);
         mAlbumRvAdapter.setData(albumList);
     }
+
+    @Override
+    public void onEmpty() {
+        mUiLoader.upDataUIStatus(UILoader.UIStatus.EMPTY);
+    }
+
+    @Override
+    public void onNetworkError() {
+        mUiLoader.upDataUIStatus(UILoader.UIStatus.NETWORK_ERROR);
+    }
+
+    @Override
+    public void onLoading() {
+        mUiLoader.upDataUIStatus(UILoader.UIStatus.LOADING);
+    }
+
 
     @Override
     public void onDestroyView() {
