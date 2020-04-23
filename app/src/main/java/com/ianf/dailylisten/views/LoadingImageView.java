@@ -45,7 +45,7 @@ public class LoadingImageView extends ImageView {
             }
         });
     }
-    //解绑window上执行
+    //解绑window时执行
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();

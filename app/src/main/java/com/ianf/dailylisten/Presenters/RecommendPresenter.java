@@ -70,6 +70,7 @@ public class RecommendPresenter implements IRecommendPresenter{
         if (gussLikeAlbumList != null) {
             List<Album> albumList = gussLikeAlbumList.getAlbumList();
             if (albumList != null) {
+//                albumList.clear();//模拟为空的UI
                 if (albumList.size() != 0) {
                     LogUtil.d(TAG,"size -> "+albumList.size());
                     //把请求回来的数据数据传给回调接口,只要是注冊过的都更新数据
