@@ -1,5 +1,6 @@
 package com.ianf.dailylisten.adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ianf.dailylisten.R;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerHolder> {
+    private static final String TAG = "DetailRvAdapter";
     private List<Track> mTracks = new ArrayList<>();
     //创造页面
     @NonNull
@@ -26,13 +29,16 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
     //绑定数据
     @Override
     public void onBindViewHolder(@NonNull InnerHolder holder, int position) {
-        holder.setData(position);
+        holder.itemView.setTag(position);
+        holder.setViewData(position);
+
     }
 
     @Override
     public int getItemCount() {
-        return 20;
+        return mTracks.size();
     }
+    
     public void setData(List<Track> tracks){
         //清除以前数据
         mTracks.clear();
@@ -41,24 +47,42 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
         //更新UI
         notifyDataSetChanged();
     }
+    @SuppressLint("SimpleDateFormat")
     public class InnerHolder extends RecyclerView.ViewHolder {
 
         private final TextView mOrderTv;
         private final TextView mDetailTitleTv;
-        private final TextView mDetialDurationTv;
+        private final TextView mDetailDurationTv;
         private final TextView mDetailPlayCountTv;
+        private final TextView mUpdateTimeTv;
 
+        private SimpleDateFormat mUpdateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private SimpleDateFormat mDurationFormat = new SimpleDateFormat("mm:ss");
         public InnerHolder(@NonNull View itemView) {
             super(itemView);
+            //初始化View
             mOrderTv = itemView.findViewById(R.id.order_text);
             mDetailTitleTv = itemView.findViewById(R.id.detail_item_title);
-            mDetialDurationTv = itemView.findViewById(R.id.detail_item_duration);
+            mDetailDurationTv = itemView.findViewById(R.id.detail_item_duration);
             mDetailPlayCountTv = itemView.findViewById(R.id.detail_item_play_count);
+            mUpdateTimeTv = itemView.findViewById(R.id.detail_item_update_time);
         }
 
-
-        public void setData(int position) {
-
+        //给View设置数据
+        @SuppressLint("SetTextI18n")
+        public void setViewData(int position) {
+            Track track = mTracks.get(position);
+            mOrderTv.setText(position+"");
+            if (track != null) {
+                mDetailPlayCountTv.setText(track.getPlayCount()+"");
+                mDetailTitleTv.setText(track.getTrackTitle());
+                //获取播放时长（秒） * 1000 -> millisecond
+                int durationMil = track.getDuration() * 1000;
+                String duration = mDurationFormat.format(durationMil);
+                mDetailDurationTv.setText(duration);
+                String updateTime = mUpdateFormat.format(track.getUpdatedAt());
+                mUpdateTimeTv.setText(updateTime);
+            }
         }
     }
 }

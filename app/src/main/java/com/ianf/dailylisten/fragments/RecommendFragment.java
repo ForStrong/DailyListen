@@ -41,7 +41,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     protected View onSubViewLoad(final LayoutInflater inflater, final ViewGroup container) {
         mUiLoader = new UILoader(getContext()) {
             @Override
-            public View getSuccessViewView() {
+            public View getSuccessView(ViewGroup container) {
                 return initView(inflater,container);
             }
         };

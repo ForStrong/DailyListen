@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -68,7 +69,7 @@ public abstract class UILoader extends FrameLayout {
         mLoadingView.setVisibility((mCurrentStatus == UIStatus.LOADING) ? VISIBLE : GONE);
 
         if (mSuccessView == null){
-            mSuccessView = getSuccessViewView();
+            mSuccessView = getSuccessView(this);
             addView(mSuccessView);
         }
         mSuccessView.setVisibility((mCurrentStatus == UIStatus.SUCCESS) ? VISIBLE : GONE);
@@ -84,7 +85,7 @@ public abstract class UILoader extends FrameLayout {
         return LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty_view,this,false);
     }
 
-    public abstract View getSuccessViewView();
+    public abstract View getSuccessView(ViewGroup container);
 
     private View getLoadingViewView() {
         return LayoutInflater.from(getContext()).inflate(R.layout.fragment_loading_view,this,false);
@@ -104,7 +105,7 @@ public abstract class UILoader extends FrameLayout {
         });
         return view;
     }
-
+    //根据传过来的status改变UI
     public void upDataUIStatus(UIStatus status){
         mCurrentStatus = status;
         LogUtil.d(TAG,"thread -> "+Thread.currentThread().getName());
@@ -116,7 +117,8 @@ public abstract class UILoader extends FrameLayout {
             }
         });
     }
-    //fragment需要在网络错误时重新获取数据时实现该接口，并传入this注册该接口
+
+    //fragment or activity需要在网络错误时重新获取数据时实现该接口，并传入this注册该接口
     public void setOnRetryListener(OnRetryClickListener retryListener){
         mRetryClickListener = retryListener;
     }

@@ -4,6 +4,7 @@ import com.ianf.dailylisten.interfaces.IDetailPresenter;
 import com.ianf.dailylisten.interfaces.IDetailViewCallback;
 import com.ianf.dailylisten.utils.Constants;
 import com.ianf.dailylisten.utils.LogUtil;
+import com.ianf.dailylisten.views.UILoader;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DetailPresenter implements IDetailPresenter {
+public class DetailPresenter implements IDetailPresenter{
     private static final String TAG = "DetailPresenter";
     private Album mAlbumByRecommend;
     private List<IDetailViewCallback> mCallbacks = new ArrayList<>();
@@ -61,6 +62,11 @@ public class DetailPresenter implements IDetailPresenter {
     */
     @Override
     public void loadData(int album_id,int page) {
+        //通知回调接口为加载状态
+        for (IDetailViewCallback callback: mCallbacks) {
+            callback.onLoading();
+        }
+
         Map<String, String> map = new HashMap<>();
         map.put(DTransferConstants.ALBUM_ID, album_id+"");
         map.put(DTransferConstants.SORT, "asc");
@@ -81,16 +87,30 @@ public class DetailPresenter implements IDetailPresenter {
             public void onError(int i, String s) {
                 LogUtil.d(TAG,"errorCode -> " + i);
                 LogUtil.d(TAG,"errorMsg -> " + s);
-
+                handleErrorResult();
 
             }
         });
     }
 
+    private void handleErrorResult() {
+        for (IDetailViewCallback callback: mCallbacks) {
+            callback.onNetworkError();
+        }
+    }
+
     private void handleDetailResult(List<Track> tracks) {
 
-        for (IDetailViewCallback callback: mCallbacks) {
-            callback.onDetailListLoaded(tracks);
+        if (tracks != null) {
+            if (tracks.size() > 0) {
+                for (IDetailViewCallback callback: mCallbacks) {
+                    callback.onDetailListLoaded(tracks);
+                }
+            }else {
+                for (IDetailViewCallback callback: mCallbacks) {
+                    callback.onEmpty();
+                }
+            }
         }
     }
 
