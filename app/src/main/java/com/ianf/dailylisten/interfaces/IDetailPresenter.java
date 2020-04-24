@@ -4,7 +4,7 @@ import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 public interface IDetailPresenter {
     //加载数据
-    void loadData();
+    void loadData(int album_id,int page);
     //上拉加载更多
     void loadMore();
     //下拉刷新

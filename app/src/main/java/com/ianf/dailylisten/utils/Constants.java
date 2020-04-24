@@ -6,6 +6,7 @@ package com.ianf.dailylisten.utils;
  *@usage:
 */
 public class Constants {
-    //猜你喜欢内容的条数
-    public static Integer RECOMMEND_COUNT = 20;
+    // 猜你喜欢内容的条数
+    public static int COUNT_RECOMMEND = 20;
+    public static int COUNT_TRACKS_PAGE_SIZE = 50;
 }

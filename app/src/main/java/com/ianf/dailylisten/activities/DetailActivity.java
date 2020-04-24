@@ -23,6 +23,8 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback 
     private TextView mAlbumTitleTv;
     private TextView mAlbumAuthorTv;
     private DetailPresenter mPresenter;
+    private Album mAlbum;
+    private int mCurrentPage = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +34,8 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback 
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         //初始化View
         initView();
-        //初始化presenter
-        mPresenter = DetailPresenter.getInstance();
-        //注册回调接口
-        mPresenter.registerViewCallback(this);
+        //初始化Presenter
+        initPresenter();
     }
 
     private void initView() {
@@ -43,14 +43,26 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback 
         mAlbumTitleTv = findViewById(R.id.tv_album_title);
         mAlbumAuthorTv = findViewById(R.id.tv_album_author);
     }
+
+    private void initPresenter() {
+        //初始化presenter
+        mPresenter = DetailPresenter.getInstance();
+        //注册回调接口,会调用callback.getAlbumByRecommend(mAlbumByRecommend)拿到Album
+        mPresenter.registerViewCallback(this);
+        //加载数据
+        mPresenter.loadData((int) mAlbum.getId(),mCurrentPage);
+    }
+
     //获取到从recommendFragment来的album，给控件添加内容
     @Override
     public void getAlbumByRecommend(Album albumByRecommend) {
+        mAlbum = albumByRecommend;
         Picasso.with(this).load(albumByRecommend.getCoverUrlSmall()).transform(new RoundTransform()).into(mSmallCoverIv);
         mAlbumAuthorTv.setText((albumByRecommend.getAnnouncer().getNickname()));
         mAlbumTitleTv.setText(albumByRecommend.getAlbumTitle());
     }
 
+    //加载数据完成presenter会回调这个接口
     @Override
     public void onDetailListLoaded(List<Track> trackList) {
 

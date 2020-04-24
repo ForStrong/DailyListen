@@ -4,7 +4,6 @@ import com.ianf.dailylisten.interfaces.IRecommendPresenter;
 import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
 import com.ianf.dailylisten.utils.Constants;
 import com.ianf.dailylisten.utils.LogUtil;
-import com.ianf.dailylisten.views.UILoader;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
@@ -49,7 +48,7 @@ public class RecommendPresenter implements IRecommendPresenter{
         }
 
         Map<String, String> specificParams = new HashMap<>();
-        specificParams.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT.toString());
+        specificParams.put(DTransferConstants.LIKE_COUNT, Constants.COUNT_RECOMMEND + "");
         CommonRequest.getGuessLikeAlbum(specificParams, new IDataCallBack<GussLikeAlbumList>() {
             //回调接口已经是主线程了可以更新rv的UI
             @Override

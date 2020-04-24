@@ -2,12 +2,22 @@ package com.ianf.dailylisten.Presenters;
 
 import com.ianf.dailylisten.interfaces.IDetailPresenter;
 import com.ianf.dailylisten.interfaces.IDetailViewCallback;
+import com.ianf.dailylisten.utils.Constants;
+import com.ianf.dailylisten.utils.LogUtil;
+import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
+import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
+import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
+import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.model.track.TrackList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DetailPresenter implements IDetailPresenter {
+    private static final String TAG = "DetailPresenter";
     private Album mAlbumByRecommend;
     private List<IDetailViewCallback> mCallbacks = new ArrayList<>();
     //单例设计模式
@@ -45,10 +55,35 @@ public class DetailPresenter implements IDetailPresenter {
         }
     }
 
-
+    /**
+    *description:通过api获取数据 api:3.2.4 专辑浏览，根据专辑ID获取专辑下的声音列表
+    *usage: page >= 1,album_id由recommendF传过来的album获得
+    */
     @Override
-    public void loadData() {
+    public void loadData(int album_id,int page) {
+        Map<String, String> map = new HashMap<>();
+        map.put(DTransferConstants.ALBUM_ID, album_id+"");
+        map.put(DTransferConstants.SORT, "asc");
+        map.put(DTransferConstants.PAGE, page+"");
+        //默认50条
+        map.put(DTransferConstants.PAGE_SIZE, Constants.COUNT_TRACKS_PAGE_SIZE + "");
+        CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
+            @Override
+            public void onSuccess(TrackList trackList) {
+                if (trackList != null) {
+                    List<Track> tracks = trackList.getTracks();
+                    LogUtil.d(TAG,"tracks size ->"+tracks.size());
+                }
+            }
 
+            @Override
+            public void onError(int i, String s) {
+                LogUtil.d(TAG,"errorCode -> " + i);
+                LogUtil.d(TAG,"errorMsg -> " + s);
+
+
+            }
+        });
     }
 
     @Override
