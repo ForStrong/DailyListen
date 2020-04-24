@@ -73,6 +73,7 @@ public class DetailPresenter implements IDetailPresenter {
                 if (trackList != null) {
                     List<Track> tracks = trackList.getTracks();
                     LogUtil.d(TAG,"tracks size ->"+tracks.size());
+                    handleDetailResult(tracks);
                 }
             }
 
@@ -84,6 +85,13 @@ public class DetailPresenter implements IDetailPresenter {
 
             }
         });
+    }
+
+    private void handleDetailResult(List<Track> tracks) {
+
+        for (IDetailViewCallback callback: mCallbacks) {
+            callback.onDetailListLoaded(tracks);
+        }
     }
 
     @Override
