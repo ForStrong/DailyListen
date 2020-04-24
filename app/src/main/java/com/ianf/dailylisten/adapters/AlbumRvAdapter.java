@@ -21,7 +21,7 @@ import java.util.List;
 
 public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHolder> {
     private List<Album> mAlbums = new ArrayList<>();
-
+    private OnAlbumItemClickListener mOnAlbumItemClickListener;
     @NonNull
     @Override
     public InnerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,10 +31,19 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InnerHolder holder, int position) {
+    public void onBindViewHolder(@NonNull InnerHolder holder, final int position) {
         holder.itemView.setTag(position);
         //给item设置数据
         holder.setData(mAlbums.get(position));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnAlbumItemClickListener != null) {
+                    mOnAlbumItemClickListener.albumItemClickListener((int)v.getTag(),mAlbums.get(position));
+                }
+            }
+        });
     }
 
     @Override
@@ -50,6 +59,13 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
         }
         //更新UI
         notifyDataSetChanged();
+    }
+    public void setAlbumItemClickListener(OnAlbumItemClickListener listener){
+        mOnAlbumItemClickListener = listener;
+    }
+
+    public interface OnAlbumItemClickListener{
+        void albumItemClickListener(int tag, Album album);
     }
 
     public class InnerHolder extends RecyclerView.ViewHolder {

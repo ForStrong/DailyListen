@@ -8,13 +8,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.ianf.dailylisten.adapters.IndicatorAdapter;
 import com.ianf.dailylisten.adapters.MainViewPagerAdapter;
+import com.ianf.dailylisten.base.BaseActivity;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.ViewPagerHelper;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
     private MagicIndicator magicIndicator;
 

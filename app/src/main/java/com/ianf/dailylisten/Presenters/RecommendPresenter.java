@@ -32,6 +32,11 @@ public class RecommendPresenter implements IRecommendPresenter{
         }
         return RECOMMEND_PRESENTER;
     }
+
+    //私有化构造方法
+    private RecommendPresenter() {
+    }
+
     /**
      *description: 根据api 3.10.6 获取猜你喜欢数据
      *usage:

@@ -4,15 +4,19 @@ package com.ianf.dailylisten.fragments;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ianf.dailylisten.Presenters.DetailPresenter;
 import com.ianf.dailylisten.Presenters.RecommendPresenter;
 import com.ianf.dailylisten.R;
+import com.ianf.dailylisten.activities.DetailActivity;
 import com.ianf.dailylisten.adapters.AlbumRvAdapter;
 import com.ianf.dailylisten.base.BaseFragment;
 import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
+import com.ianf.dailylisten.utils.LogUtil;
 import com.ianf.dailylisten.views.UILoader;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -24,7 +28,7 @@ import java.util.List;
  *@description: 推荐页面 mvp模式，在里面实现回调接口并让Presenter注册接口，这样model层代码改变时就调用接口中方法
  *@usage:
 */
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener  {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener,AlbumRvAdapter.OnAlbumItemClickListener {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView mAlbum_rv;
@@ -67,6 +71,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         mAlbum_rv.setLayoutManager(linearLayoutManager);
         //初始化RvAdapter
         mAlbumRvAdapter = new AlbumRvAdapter();
+        //给RvItem设置回调接口
+        mAlbumRvAdapter.setAlbumItemClickListener(this);
         //Rv设置adapter
         mAlbum_rv.setAdapter(mAlbumRvAdapter);
 
@@ -107,5 +113,13 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         super.onDestroyView();
         //注销回调接口
         mPresenter.unRegisterCallback(this);
+    }
+
+    @Override
+    public void albumItemClickListener(int tag, Album album) {
+        LogUtil.d(TAG,"tag -->" + tag);
+        DetailPresenter.getInstance().setAlbumByRecommend(album);
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        startActivity(intent);
     }
 }
