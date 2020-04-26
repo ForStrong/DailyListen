@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ianf.dailylisten.Presenters.DetailPresenter;
+import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.adapters.DetailRvAdapter;
 import com.ianf.dailylisten.base.BaseActivity;
@@ -147,8 +148,10 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
     }
 
     @Override
-    public void onItemClick() {
-        //TODO:调转到播放页面
+    public void onItemClick(List<Track> tracks, int position) {
+        //给播放页面传递数据
+        PlayerPresenter.getInstance().setTrackList(tracks,position);
+        //调转到播放页面
         Intent intent = new Intent(this,PlayerActivity.class);
         startActivity(intent);
     }

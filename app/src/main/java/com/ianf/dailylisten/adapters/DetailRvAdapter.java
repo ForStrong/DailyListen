@@ -30,7 +30,7 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
     }
     //绑定数据
     @Override
-    public void onBindViewHolder(@NonNull InnerHolder holder, int position) {
+    public void onBindViewHolder(@NonNull InnerHolder holder, final int position) {
         holder.itemView.setTag(position);
         holder.setViewData(position);
         //给item设置点击事件
@@ -38,7 +38,7 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
             @Override
             public void onClick(View v) {
                 if (mItemClickListener != null) {
-                    mItemClickListener.onItemClick();
+                    mItemClickListener.onItemClick(mTracks,position);
                 }
                 Toast.makeText(v.getContext(), "position" + v.getTag(), Toast.LENGTH_SHORT).show();
             }
@@ -103,6 +103,6 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
     }
     //创建Item点击的回调接口
     public interface OnItemClickListener{
-        void onItemClick();
+        void onItemClick(List<Track> tracks, int position);
     }
 }

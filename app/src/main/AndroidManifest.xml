@@ -30,6 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name="com.ximalaya.ting.android.opensdk.player.service.XmPlayerService"
+            android:process=":player"/>
     </application>
+
 
 </manifest>
