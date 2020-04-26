@@ -60,9 +60,11 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
         //更新UI
         notifyDataSetChanged();
     }
+    //设置ItemClickListener接口
     public void setAlbumItemClickListener(OnAlbumItemClickListener listener){
         mOnAlbumItemClickListener = listener;
     }
+
 
     public interface OnAlbumItemClickListener{
         void albumItemClickListener(int tag, Album album);

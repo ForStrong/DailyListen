@@ -4,7 +4,6 @@ import com.ianf.dailylisten.interfaces.IDetailPresenter;
 import com.ianf.dailylisten.interfaces.IDetailViewCallback;
 import com.ianf.dailylisten.utils.Constants;
 import com.ianf.dailylisten.utils.LogUtil;
-import com.ianf.dailylisten.views.UILoader;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
@@ -41,6 +40,7 @@ public class DetailPresenter implements IDetailPresenter{
         mAlbumByRecommend = album;
     }
     //注册接口的时候，detailActivity也能获取到从Recommend来的album
+    @Override
     public void registerViewCallback(IDetailViewCallback callback){
         if (callback != null && !mCallbacks.contains(callback)) {
             mCallbacks.add(callback);
@@ -50,6 +50,7 @@ public class DetailPresenter implements IDetailPresenter{
         }
     }
     //注销注册接口，以免内存泄漏
+    @Override
     public void unRegisterViewCallback(IDetailViewCallback callback){
         if (callback != null ) {
             mCallbacks.remove(callback);

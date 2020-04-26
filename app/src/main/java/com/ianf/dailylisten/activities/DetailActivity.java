@@ -1,5 +1,6 @@
 package com.ianf.dailylisten.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,7 +26,7 @@ import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.List;
 
-public class DetailActivity extends BaseActivity implements IDetailViewCallback, UILoader.OnRetryClickListener  {
+public class DetailActivity extends BaseActivity implements IDetailViewCallback, UILoader.OnRetryClickListener,DetailRvAdapter.OnItemClickListener  {
 
     private ImageView mSmallCoverIv;
     private TextView mAlbumTitleTv;
@@ -85,6 +86,9 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
         mDetailRv.setLayoutManager(layoutManager);
         //设置adapter
         mDetailRvAdapter = new DetailRvAdapter();
+        //给Adapter设置itemView点击事件
+        mDetailRvAdapter.setItemClickListener(this);
+        //Rv设置Adapter
         mDetailRv.setAdapter(mDetailRvAdapter);
         return view;
     }
@@ -140,5 +144,12 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
     @Override
     public void retryLoadData() {
         mPresenter.loadData((int) mAlbum.getId(),mCurrentPage);
+    }
+
+    @Override
+    public void onItemClick() {
+        //TODO:调转到播放页面
+        Intent intent = new Intent(this,PlayerActivity.class);
+        startActivity(intent);
     }
 }

@@ -99,18 +99,20 @@ public class RecommendPresenter implements IRecommendPresenter{
     public void pullRefresh() {
 
     }
+
+
     //注册回调接口
-    public void registerCallback(IRecommendViewCallback callback){
+    @Override
+    public void registerViewCallback(IRecommendViewCallback callback) {
         if (callback!=null && !mCallbacks.contains(callback)){
             mCallbacks.add(callback);
         }
     }
     //注销回调接口，避免内存泄漏
-    public void unRegisterCallback(IRecommendViewCallback callback){
+    @Override
+    public void unRegisterViewCallback(IRecommendViewCallback callback) {
         if (callback!=null){
             mCallbacks.remove(callback);
         }
     }
-
-
 }

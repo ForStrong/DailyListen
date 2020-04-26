@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ import java.util.List;
 public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerHolder> {
     private static final String TAG = "DetailRvAdapter";
     private List<Track> mTracks = new ArrayList<>();
+    private OnItemClickListener mItemClickListener;
     //创造页面
     @NonNull
     @Override
@@ -31,7 +33,16 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
     public void onBindViewHolder(@NonNull InnerHolder holder, int position) {
         holder.itemView.setTag(position);
         holder.setViewData(position);
-
+        //给item设置点击事件
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mItemClickListener != null) {
+                    mItemClickListener.onItemClick();
+                }
+                Toast.makeText(v.getContext(), "position" + v.getTag(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -84,5 +95,14 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
                 mUpdateTimeTv.setText(updateTime);
             }
         }
+    }
+
+    //设置回调接口
+    public void setItemClickListener(OnItemClickListener clickListener){
+        mItemClickListener = clickListener;
+    }
+    //创建Item点击的回调接口
+    public interface OnItemClickListener{
+        void onItemClick();
     }
 }

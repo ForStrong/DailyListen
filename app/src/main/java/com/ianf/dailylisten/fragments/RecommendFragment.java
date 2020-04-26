@@ -1,13 +1,13 @@
 package com.ianf.dailylisten.fragments;
 
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ianf.dailylisten.Presenters.DetailPresenter;
 import com.ianf.dailylisten.Presenters.RecommendPresenter;
@@ -49,7 +49,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //创建Presenter
         mPresenter = RecommendPresenter.getInstance();
         //注册回调接口
-        mPresenter.registerCallback(this);
+        mPresenter.registerViewCallback(this);
         //注册网络错误时重新获取数据接口
         mUiLoader.setOnRetryListener(this);
         //加载数据
@@ -112,7 +112,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     public void onDestroyView() {
         super.onDestroyView();
         //注销回调接口
-        mPresenter.unRegisterCallback(this);
+        mPresenter.unRegisterViewCallback(this);
     }
 
     @Override

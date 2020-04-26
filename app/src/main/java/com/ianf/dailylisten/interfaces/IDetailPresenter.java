@@ -1,8 +1,8 @@
 package com.ianf.dailylisten.interfaces;
 
-import com.ximalaya.ting.android.opensdk.model.album.Album;
+import com.ianf.dailylisten.base.IBasePresenter;
 
-public interface IDetailPresenter {
+public interface IDetailPresenter extends IBasePresenter<IDetailViewCallback> {
     //加载数据
     void loadData(int album_id,int page);
     //上拉加载更多

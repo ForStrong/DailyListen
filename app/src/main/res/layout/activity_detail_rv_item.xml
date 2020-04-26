@@ -82,10 +82,10 @@
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/guideline24"
+                app:layout_constraintHorizontal_bias="0.16"
+                app:layout_constraintStart_toEndOf="@+id/detail_item_play_count"
                 app:layout_constraintTop_toTopOf="@+id/guideline23"
-                app:layout_constraintVertical_bias="0.3" />
+                app:layout_constraintVertical_bias="0.307" />
 
             <TextView
                 android:id="@+id/detail_item_play_count"
@@ -97,8 +97,6 @@
                 android:text="4.5万"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/detail_item_duration"
-                app:layout_constraintEnd_toStartOf="@+id/guideline24"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline22"
                 app:layout_constraintTop_toTopOf="@+id/detail_item_duration"
                 app:layout_constraintVertical_bias="0.050000012" />
