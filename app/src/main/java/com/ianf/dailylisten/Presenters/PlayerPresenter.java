@@ -14,12 +14,17 @@ import com.ximalaya.ting.android.opensdk.player.service.IXmPlayerStatusListener;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
     private static PlayerPresenter sPlayerPresenter = null;
     private final XmPlayerManager mXmPlayerManager;
     private static final String TAG = "PlayerPresenter";
+    private List<IPlayerViewCallback> mCallbackList = new ArrayList<>();
+    private boolean isPlayListSet;
+    private Track mCurrentTrack;
+    private int mCurrentIndex;
 
     //单例化
     private PlayerPresenter(){
@@ -42,17 +47,31 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     //接收来自DetailActivity的数据
     public void setTrackList(List<Track> list, int startIndex){
-        mXmPlayerManager.playList(list,startIndex);
+        //mXmPlayerManager.playList(list,startIndex);
+        if(mXmPlayerManager != null) {
+            mXmPlayerManager.setPlayList(list,startIndex);
+            isPlayListSet = true;
+            mCurrentTrack = list.get(startIndex);
+            mCurrentIndex = startIndex;
+        } else {
+            LogUtil.d(TAG,"mPlayerManager is null");
+        }
     }
 
     @Override
     public void play() {
-
+        mXmPlayerManager.play();
+        for (IPlayerViewCallback callback: mCallbackList) {
+            callback.onPlayStart();
+        }
     }
 
     @Override
     public void pause() {
-
+        mXmPlayerManager.pause();
+        for (IPlayerViewCallback callback: mCallbackList) {
+            callback.onPlayPause();
+        }
     }
 
     @Override
@@ -86,8 +105,15 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     }
 
     @Override
-    public void registerViewCallback(IPlayerViewCallback iPlayerViewCallback) {
+    public boolean isPlaying() {
+        return mXmPlayerManager.isPlaying();
+    }
 
+    @Override
+    public void registerViewCallback(IPlayerViewCallback iPlayerViewCallback) {
+        if (!mCallbackList.contains(iPlayerViewCallback)) {
+            mCallbackList.add(iPlayerViewCallback);
+        }
     }
 
     @Override

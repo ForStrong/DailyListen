@@ -47,7 +47,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline25" />
 
     <ImageView
-        android:id="@+id/player_mode_switch_btn"
+        android:id="@+id/player_mode_switch_iv"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -62,15 +62,15 @@
         android:id="@+id/play_pre"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/player_mode_switch_btn"
-        app:layout_constraintEnd_toStartOf="@+id/play_or_pause_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/player_mode_switch_iv"
+        app:layout_constraintEnd_toStartOf="@+id/play_or_pause_iv"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/player_mode_switch_btn"
-        app:layout_constraintTop_toTopOf="@+id/player_mode_switch_btn"
+        app:layout_constraintStart_toEndOf="@+id/player_mode_switch_iv"
+        app:layout_constraintTop_toTopOf="@+id/player_mode_switch_iv"
         app:srcCompat="@mipmap/previous_normal" />
 
     <ImageView
-        android:id="@+id/play_or_pause_btn"
+        android:id="@+id/play_or_pause_iv"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         app:layout_constraintBottom_toBottomOf="@+id/play_pre"
@@ -84,11 +84,11 @@
         android:id="@+id/play_next"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/play_or_pause_btn"
+        app:layout_constraintBottom_toBottomOf="@+id/play_or_pause_iv"
         app:layout_constraintEnd_toStartOf="@+id/player_list"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/play_or_pause_btn"
-        app:layout_constraintTop_toTopOf="@+id/play_or_pause_btn"
+        app:layout_constraintStart_toEndOf="@+id/play_or_pause_iv"
+        app:layout_constraintTop_toTopOf="@+id/play_or_pause_iv"
         app:srcCompat="@mipmap/next_normal" />
 
     <ImageView
