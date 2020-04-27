@@ -12,9 +12,17 @@ import android.widget.TextView;
 import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.interfaces.IPlayerViewCallback;
+import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.text.SimpleDateFormat;
+/**
+*create by IANDF in 2020/4/27
+ *lastTime:
+ *@description: ViewCallBack中的方法由于都是异步的，所以使用控件之前都要判空
+ *@usage:
+ *god bless my code
+*/
 
 public class PlayerActivity extends AppCompatActivity implements IPlayerViewCallback {
 
@@ -30,6 +38,9 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     private int mCurrentPos = 0;
     //判断当前时间是不是用户在改变进度条
     private boolean isFromUser = false;
+    private ImageView mPlayPreIv;
+    private ImageView mPlayNextIv;
+    private TextView mTrackTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +49,13 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         //设置全屏隐藏状态栏
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
+        //先初始化UI再写PlayerPresenter
+        initView();
+        initEvent();
         //初始化Presenter
         mPlayerPresenter = PlayerPresenter.getInstance();
         //注册回调接口
         mPlayerPresenter.registerViewCallback(this);
-        initView();
-        initEvent();
         //进来就播放
         mPlayerPresenter.play();
     }
@@ -84,6 +96,20 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 mPlayerPresenter.seekTo(mCurrentPos);
             }
         });
+
+        mPlayPreIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlayerPresenter.playPre();
+            }
+        });
+
+        mPlayNextIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPlayerPresenter.playNext();
+            }
+        });
     }
 
     private void initView() {
@@ -91,6 +117,9 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         mDurationTv = findViewById(R.id.track_duration);
         mCurrentPosition = findViewById(R.id.current_position);
         mDurationSeekBar = findViewById(R.id.track_seek_bar);
+        mPlayPreIv = findViewById(R.id.play_pre);
+        mPlayNextIv = findViewById(R.id.play_next);
+        mTrackTitle = findViewById(R.id.track_title);
     }
 
     @Override
@@ -125,7 +154,9 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
 
     @Override
     public void onPlayNext() {
-
+        if (mTrackTitle != null) {
+//            mTrackTitle.setText();
+        }
     }
 
     @Override
@@ -160,6 +191,19 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 mDurationSeekBar.setMax(total);
                 mDurationSeekBar.setProgress(currentProcess);
             }
+        }
+    }
+
+    @Override
+    public void onTrackLoadedByDetail(Track track) {
+        //跟新控件UI
+        mTrackTitle.setText(track.getTrackTitle());
+    }
+
+    @Override
+    public void onSoundSwitch(Track curTrack) {
+        if (mTrackTitle != null){
+            mTrackTitle.setText(curTrack.getTrackTitle());
         }
     }
     //======================================IPlayerViewCallback end===============================

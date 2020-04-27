@@ -81,12 +81,14 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void playNext() {
-
+        if (mXmPlayerManager.hasNextSound())
+            mXmPlayerManager.playNext();
     }
 
     @Override
     public void playPre() {
-
+        if (mXmPlayerManager.hasPreSound())
+            mXmPlayerManager.playPre();
     }
 
     @Override
@@ -111,6 +113,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void registerViewCallback(IPlayerViewCallback iPlayerViewCallback) {
+        iPlayerViewCallback.onTrackLoadedByDetail(mCurrentTrack);
         if (!mCallbackList.contains(iPlayerViewCallback)) {
             mCallbackList.add(iPlayerViewCallback);
         }
@@ -197,13 +200,18 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     }
 
     /**
-     *
+     *切歌时调用
      * @param lastModel：上一首model,可能为空
-     * @param curModel：下一首model
+     * @param curModel：当前model
      */
     @Override
     public void onSoundSwitch(PlayableModel lastModel, PlayableModel curModel) {
         LogUtil.d(TAG,"onSoundSwitch...");
+        if (curModel instanceof Track){
+            for (IPlayerViewCallback callback : mCallbackList) {
+                callback.onSoundSwitch((Track) curModel);
+            }
+        }
     }
 
     @Override
