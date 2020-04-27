@@ -51,5 +51,5 @@ public interface IPlayerViewCallback {
     /**
      * 8.进度条改变
      */
-    void onProcessChange(long currentProcess,int total);
+    void onProcessChange(int currentProcess,int total);
 }

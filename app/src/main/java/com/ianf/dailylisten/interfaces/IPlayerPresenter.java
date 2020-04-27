@@ -46,7 +46,7 @@ public interface IPlayerPresenter extends IBasePresenter<IPlayerViewCallback> {
     void setPlayMode(XmPlayListControl.PlayMode mode);
 
     //8.按进度条切换播放
-    void play(int index);
+    void seekTo(int index);
 
     // 9.是否在播放
     boolean isPlaying();

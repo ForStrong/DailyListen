@@ -22,8 +22,11 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     private final XmPlayerManager mXmPlayerManager;
     private static final String TAG = "PlayerPresenter";
     private List<IPlayerViewCallback> mCallbackList = new ArrayList<>();
-    private boolean isPlayListSet;
+    //PlayListSet是否设置好了
+    private boolean isPlayListSet = false;
+    //当前的Track
     private Track mCurrentTrack;
+    //当前的Track在TrackList的位置
     private int mCurrentIndex;
 
     //单例化
@@ -60,18 +63,15 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void play() {
-        mXmPlayerManager.play();
-        for (IPlayerViewCallback callback: mCallbackList) {
-            callback.onPlayStart();
+        if (isPlayListSet) {
+            mXmPlayerManager.play();
         }
     }
 
     @Override
     public void pause() {
         mXmPlayerManager.pause();
-        for (IPlayerViewCallback callback: mCallbackList) {
-            callback.onPlayPause();
-        }
+
     }
 
     @Override
@@ -98,10 +98,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     public void setPlayMode(XmPlayListControl.PlayMode mode) {
 
     }
-
+    //更新播放器为用户拖动进度条的位置
     @Override
-    public void play(int index) {
-
+    public void seekTo(int index) {
+        mXmPlayerManager.seekTo(index);
     }
 
     @Override
@@ -163,16 +163,25 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void onPlayStart() {
         LogUtil.d(TAG,"onPlayStart...");
+        for (IPlayerViewCallback callback: mCallbackList) {
+            callback.onPlayStart();
+        }
     }
 
     @Override
     public void onPlayPause() {
         LogUtil.d(TAG,"onPlayPause...");
+        for (IPlayerViewCallback callback: mCallbackList) {
+            callback.onPlayPause();
+        }
     }
 
     @Override
     public void onPlayStop() {
         LogUtil.d(TAG,"onPlayStop...");
+        for (IPlayerViewCallback callback: mCallbackList) {
+            callback.onPlayPause();
+        }
     }
 
     //播放完成
@@ -214,7 +223,11 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void onPlayProgress(int currPos, int duration) {
+        //单位：毫秒
         LogUtil.d(TAG,"onPlayProgress...currPos --> "+currPos+"  duration --> "+duration);
+        for (IPlayerViewCallback callback: mCallbackList) {
+            callback.onProcessChange(currPos,duration);
+        }
     }
 
     @Override
