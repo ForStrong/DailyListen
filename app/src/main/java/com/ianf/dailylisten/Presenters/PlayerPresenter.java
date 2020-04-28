@@ -3,6 +3,7 @@ package com.ianf.dailylisten.Presenters;
 import com.ianf.dailylisten.base.BaseApplication;
 import com.ianf.dailylisten.interfaces.IPlayerPresenter;
 import com.ianf.dailylisten.interfaces.IPlayerViewCallback;
+import com.ianf.dailylisten.utils.Constants;
 import com.ianf.dailylisten.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.PlayableModel;
 import com.ximalaya.ting.android.opensdk.model.advertis.Advertis;
@@ -101,7 +102,11 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void setPlayMode(XmPlayListControl.PlayMode mode) {
-
+        mXmPlayerManager.setPlayMode(mode);
+        Constants.CURRENT_MODE = mode;
+        for (IPlayerViewCallback callback : mCallbackList) {
+            callback.onPlayModeChange(mode);
+        }
     }
     //更新播放器为用户拖动进度条的位置
     @Override
@@ -128,6 +133,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         }
         //给ViewPagerAdapter传递数据
         getPlayList();
+        //设置之前的模式
+        for (IPlayerViewCallback callback : mCallbackList) {
+            callback.onPlayModeChange(Constants.CURRENT_MODE);
+        }
 
     }
 
@@ -209,6 +218,8 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void onSoundPrepared() {
         LogUtil.d(TAG,"onSoundPrepared...");
+        mXmPlayerManager.setPlayMode(Constants.CURRENT_MODE);
+
         mXmPlayerManager.play();
     }
 

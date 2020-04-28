@@ -1,14 +1,14 @@
 package com.ianf.dailylisten.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.R;
@@ -18,7 +18,10 @@ import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.*;
 
 /**
 *create by IANDF in 2020/4/27
@@ -48,6 +51,21 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     private TextView mTrackNameTv;
     private ViewPager mPlayerViewPager;
     private PlayerViewPagerAdapter mViewPagerAdapter;
+    private ImageView mSwitchPlayModelIv;
+    private XmPlayListControl.PlayMode mCurrentMode = PLAY_MODEL_LIST;
+    private static HashMap<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> mPlayModeMap = new HashMap<>();
+/*   设置播放器模式，mode取值为PlayMode中的下列之一：
+     * 1.PLAY_MODEL_LIST列表播放
+     * 2.PLAY_MODEL_SINGLE_LOOP 单曲循环播放
+     * 3.PLAY_MODEL_LIST_LOOP列表循环
+     * 4.PLAY_MODEL_RANDOM 随机播放
+     */
+    static {
+        mPlayModeMap.put(PLAY_MODEL_LIST,PLAY_MODEL_SINGLE_LOOP);
+        mPlayModeMap.put(PLAY_MODEL_SINGLE_LOOP,PLAY_MODEL_LIST_LOOP);
+        mPlayModeMap.put(PLAY_MODEL_LIST_LOOP, PLAY_MODEL_RANDOM );
+        mPlayModeMap.put(PLAY_MODEL_RANDOM,PLAY_MODEL_LIST);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +77,10 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         //先初始化UI再写PlayerPresenter
         initView();
         initEvent();
+        initPresenter();
+    }
+
+    private void initPresenter() {
         //初始化Presenter
         mPlayerPresenter = PlayerPresenter.getInstance();
         //注册回调接口
@@ -116,8 +138,41 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 mPlayerPresenter.playNext();
             }
         });
-
+        //给ViewPager设置点击事件
         mPlayerViewPager.addOnPageChangeListener(this);
+
+        mSwitchPlayModelIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //告诉presenter让他设置点击事件
+                mCurrentMode = mPlayModeMap.get(mCurrentMode);
+                mPlayerPresenter.setPlayMode(mCurrentMode);
+            }
+        });
+    }
+    /*    设置播放器模式，mode取值为PlayMode中的下列之一：
+     * 1.PLAY_MODEL_LIST列表播放
+     * 2.PLAY_MODEL_SINGLE_LOOP 单曲循环播放
+     * 3.PLAY_MODEL_LIST_LOOP列表循环
+     * 4.PLAY_MODEL_RANDOM 随机播放
+     */
+    private void switchUIByModel(XmPlayListControl.PlayMode currentMode) {
+        int rId = R.drawable.selector_play_mode_list_order;
+        switch (currentMode) {
+            case PLAY_MODEL_LIST:
+                rId = R.drawable.selector_play_mode_list_order;
+                break;
+            case PLAY_MODEL_SINGLE_LOOP:
+                rId = R.drawable.selector_paly_mode_single_loop;
+                break;
+            case PLAY_MODEL_LIST_LOOP:
+                rId = R.drawable.selector_paly_mode_list_order_looper;
+                break;
+            case PLAY_MODEL_RANDOM:
+                rId = R.drawable.selector_paly_mode_random;
+                break;
+        }
+        mSwitchPlayModelIv.setImageResource(rId);
     }
 
     private void initView() {
@@ -133,7 +188,7 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         //给ViewPager添加适配器
         mViewPagerAdapter = new PlayerViewPagerAdapter();
         mPlayerViewPager.setAdapter(mViewPagerAdapter);
-
+        mSwitchPlayModelIv = findViewById(R.id.player_mode_switch_iv);
     }
 
     @Override
@@ -168,19 +223,17 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
 
     @Override
     public void onPlayNext() {
-        if (mTrackTitle != null) {
-//            mTrackTitle.setText();
-        }
     }
 
     @Override
     public void onPlayPre() {
 
     }
-
+    //设置播放器模式
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode mode) {
-
+        mCurrentMode = mode;
+        switchUIByModel(mCurrentMode);
     }
     //如果用户没触摸进度条，自动跟新进度条和时间
     @Override
