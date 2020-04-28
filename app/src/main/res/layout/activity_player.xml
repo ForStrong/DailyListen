@@ -26,14 +26,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.83" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline27"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.9" />
+        app:layout_constraintGuide_percent="0.88" />
 
     <TextView
         android:id="@+id/track_title"
@@ -54,57 +54,56 @@
     <ImageView
         android:id="@+id/player_mode_switch_iv"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/play_pre"
         app:layout_constraintEnd_toStartOf="@+id/play_pre"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline27"
-        app:layout_constraintVertical_bias="0.40"
+        app:layout_constraintTop_toTopOf="@+id/play_pre"
         app:srcCompat="@mipmap/sort_descending_normal" />
 
     <ImageView
         android:id="@+id/play_pre"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/player_mode_switch_iv"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/play_or_pause_iv"
         app:layout_constraintEnd_toStartOf="@+id/play_or_pause_iv"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/player_mode_switch_iv"
-        app:layout_constraintTop_toTopOf="@+id/player_mode_switch_iv"
-        app:srcCompat="@mipmap/previous_normal" />
+        app:layout_constraintTop_toTopOf="@+id/play_or_pause_iv"
+        app:srcCompat="@drawable/selector_palyer_pre" />
 
     <ImageView
         android:id="@+id/play_or_pause_iv"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="@+id/play_pre"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="@+id/play_next"
         app:layout_constraintEnd_toStartOf="@+id/play_next"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/play_pre"
-        app:layout_constraintTop_toTopOf="@+id/play_pre"
-        app:srcCompat="@mipmap/play_normal" />
+        app:layout_constraintTop_toTopOf="@+id/play_next"
+        app:srcCompat="@drawable/selector_player_play" />
 
     <ImageView
         android:id="@+id/play_next"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/play_or_pause_iv"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="@+id/player_list"
         app:layout_constraintEnd_toStartOf="@+id/player_list"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/play_or_pause_iv"
-        app:layout_constraintTop_toTopOf="@+id/play_or_pause_iv"
-        app:srcCompat="@mipmap/next_normal" />
+        app:layout_constraintTop_toTopOf="@+id/player_list"
+        app:srcCompat="@drawable/selector_palyer_next" />
 
     <ImageView
         android:id="@+id/player_list"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/play_next"
+        android:layout_height="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/play_next"
-        app:layout_constraintTop_toTopOf="@+id/play_next"
+        app:layout_constraintTop_toTopOf="@+id/guideline27"
         app:srcCompat="@mipmap/player_icon_list_normal" />
 
     <TextView

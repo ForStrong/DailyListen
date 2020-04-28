@@ -148,21 +148,21 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     @Override
     public void onPlayStart() {
         if (mPlayOrPauseIv != null) {
-            mPlayOrPauseIv.setImageResource(R.mipmap.stop_normal);
+            mPlayOrPauseIv.setImageResource(R.drawable.selector_palyer_pause);
         }
     }
 
     @Override
     public void onPlayPause() {
         if (mPlayOrPauseIv != null) {
-            mPlayOrPauseIv.setImageResource(R.mipmap.play_normal);
+            mPlayOrPauseIv.setImageResource(R.drawable.selector_player_play);
         }
     }
 
     @Override
     public void onPlayStop() {
         if (mPlayOrPauseIv != null) {
-            mPlayOrPauseIv.setImageResource(R.mipmap.play_normal);
+            mPlayOrPauseIv.setImageResource(R.drawable.selector_player_play);
         }
     }
 

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.ianf.dailylisten.R;
+import com.ianf.dailylisten.views.RoundTransform;
 import com.squareup.picasso.Picasso;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
@@ -35,7 +36,7 @@ public class PlayerViewPagerAdapter extends PagerAdapter {
         Track track = mTracks.get(position);
         String coverUrlLarge = track.getCoverUrlLarge();
         ImageView imageView = itemView.findViewById(R.id.player_view_pager_iv);
-        Picasso.with(container.getContext()).load(coverUrlLarge).into(imageView);
+        Picasso.with(container.getContext()).load(coverUrlLarge).transform(new RoundTransform()).into(imageView);
         return itemView;
     }
 
