@@ -1,8 +1,9 @@
 package com.ianf.dailylisten.interfaces;
 
-import com.ximalaya.ting.android.opensdk.model.PlayableModel;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
+
+import java.util.List;
 
 /**
 *create by IANDF in 2020/4/26
@@ -18,6 +19,7 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
  * 8.进度条改变
  * 9.从detailActivity获取到Track
  * 10.切歌时调用
+ * 11.获取当前trackList
  *god bless my code
 */
 public interface IPlayerViewCallback {
@@ -64,6 +66,12 @@ public interface IPlayerViewCallback {
     /**
      * 10.切歌时调用
      * @param curTrack 切换后的track
+     * @param currentIndex
      */
-    void onSoundSwitch(Track curTrack);
+    void onSoundSwitch(Track curTrack, int currentIndex);
+
+    /**
+     * 获取当前trackList
+     */
+    void onTrackListLoaded(List<Track> tracks);
 }

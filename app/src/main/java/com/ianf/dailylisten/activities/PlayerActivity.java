@@ -1,6 +1,7 @@
 package com.ianf.dailylisten.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,11 +12,14 @@ import android.widget.TextView;
 
 import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.R;
+import com.ianf.dailylisten.adapters.PlayerViewPagerAdapter;
 import com.ianf.dailylisten.interfaces.IPlayerViewCallback;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
+
 /**
 *create by IANDF in 2020/4/27
  *lastTime:
@@ -24,12 +28,12 @@ import java.text.SimpleDateFormat;
  *god bless my code
 */
 
-public class PlayerActivity extends AppCompatActivity implements IPlayerViewCallback {
+public class PlayerActivity extends AppCompatActivity implements IPlayerViewCallback, ViewPager.OnPageChangeListener {
 
     private ImageView mPlayOrPauseIv;
     private PlayerPresenter mPlayerPresenter;
     private TextView mDurationTv;
-    private TextView mCurrentPosition;
+    private TextView mCurrentPositionTv;
     //格式化时间
     private SimpleDateFormat mMinFormat = new SimpleDateFormat("mm:ss");
     private SimpleDateFormat mHourFormat = new SimpleDateFormat("hh:mm:ss");
@@ -41,6 +45,9 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     private ImageView mPlayPreIv;
     private ImageView mPlayNextIv;
     private TextView mTrackTitle;
+    private TextView mTrackNameTv;
+    private ViewPager mPlayerViewPager;
+    private PlayerViewPagerAdapter mViewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +90,6 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 }
 
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 isFromUser = true;
@@ -110,16 +116,24 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 mPlayerPresenter.playNext();
             }
         });
+
+        mPlayerViewPager.addOnPageChangeListener(this);
     }
 
     private void initView() {
         mPlayOrPauseIv = findViewById(R.id.play_or_pause_iv);
         mDurationTv = findViewById(R.id.track_duration);
-        mCurrentPosition = findViewById(R.id.current_position);
+        mCurrentPositionTv = findViewById(R.id.current_position);
         mDurationSeekBar = findViewById(R.id.track_seek_bar);
         mPlayPreIv = findViewById(R.id.play_pre);
         mPlayNextIv = findViewById(R.id.play_next);
         mTrackTitle = findViewById(R.id.track_title);
+        mTrackNameTv = findViewById(R.id.track_name);
+        mPlayerViewPager = findViewById(R.id.player_view_pager);
+        //给ViewPager添加适配器
+        mViewPagerAdapter = new PlayerViewPagerAdapter();
+        mPlayerViewPager.setAdapter(mViewPagerAdapter);
+
     }
 
     @Override
@@ -184,8 +198,8 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
             if (mDurationTv != null) {
                 mDurationTv.setText(durationS);
             }
-            if (mCurrentPosition != null) {
-                mCurrentPosition.setText(currentProcessS);
+            if (mCurrentPositionTv != null) {
+                mCurrentPositionTv.setText(currentProcessS);
             }
             if (mDurationSeekBar != null){
                 mDurationSeekBar.setMax(total);
@@ -198,13 +212,45 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     public void onTrackLoadedByDetail(Track track) {
         //跟新控件UI
         mTrackTitle.setText(track.getTrackTitle());
+        mTrackNameTv.setText(track.getAnnouncer().getNickname());
     }
 
+
+
     @Override
-    public void onSoundSwitch(Track curTrack) {
+    public void onSoundSwitch(Track curTrack, int currentIndex) {
         if (mTrackTitle != null){
             mTrackTitle.setText(curTrack.getTrackTitle());
         }
+        if (mTrackNameTv != null){
+            mTrackNameTv.setText(curTrack.getAnnouncer().getNickname());
+        }
+        mPlayerViewPager.setCurrentItem(currentIndex);
+    }
+
+    //11.获取当前trackList
+    @Override
+    public void onTrackListLoaded(List<Track> tracks) {
+        mViewPagerAdapter.setData(tracks);
+
     }
     //======================================IPlayerViewCallback end===============================
+
+    //======================================ViewPagerChange start===================================
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (mPlayerPresenter != null) {
+            mPlayerPresenter.play(position);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

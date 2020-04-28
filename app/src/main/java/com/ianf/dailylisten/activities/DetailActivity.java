@@ -101,7 +101,9 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
         mPresenter.registerViewCallback(this);
 
         //加载数据
-        mPresenter.loadData((int) mAlbum.getId(),mCurrentPage);
+        if (mAlbum != null) {
+            mPresenter.loadData((int) mAlbum.getId(),mCurrentPage);
+        }
     }
 
     //获取到从recommendFragment来的album，给控件添加内容

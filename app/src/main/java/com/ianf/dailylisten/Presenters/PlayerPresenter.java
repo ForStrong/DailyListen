@@ -31,6 +31,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     //单例化
     private PlayerPresenter(){
+        //初始化mXmPlayerManager
         mXmPlayerManager = XmPlayerManager.getInstance(BaseApplication.getContext());
         //监听广告播放状态
         mXmPlayerManager.addAdsStatusListener(this);
@@ -90,10 +91,12 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         if (mXmPlayerManager.hasPreSound())
             mXmPlayerManager.playPre();
     }
-
+    //给ViewPagerAdapter传递数据
     @Override
     public void getPlayList() {
-
+        for (IPlayerViewCallback callback : mCallbackList) {
+            callback.onTrackListLoaded(mXmPlayerManager.getPlayList());
+        }
     }
 
     @Override
@@ -112,16 +115,25 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     }
 
     @Override
+    public void play(int position) {
+        //playByIndex会调用onSoundSwitch
+        mXmPlayerManager.play(position);
+    }
+
+    @Override
     public void registerViewCallback(IPlayerViewCallback iPlayerViewCallback) {
         iPlayerViewCallback.onTrackLoadedByDetail(mCurrentTrack);
         if (!mCallbackList.contains(iPlayerViewCallback)) {
             mCallbackList.add(iPlayerViewCallback);
         }
+        //给ViewPagerAdapter传递数据
+        getPlayList();
+
     }
 
     @Override
     public void unRegisterViewCallback(IPlayerViewCallback iPlayerViewCallback) {
-
+        mCallbackList.remove(iPlayerViewCallback);
     }
 
 
@@ -197,6 +209,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void onSoundPrepared() {
         LogUtil.d(TAG,"onSoundPrepared...");
+        mXmPlayerManager.play();
     }
 
     /**
@@ -206,10 +219,11 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
      */
     @Override
     public void onSoundSwitch(PlayableModel lastModel, PlayableModel curModel) {
+        mCurrentIndex = mXmPlayerManager.getCurrentIndex();
         LogUtil.d(TAG,"onSoundSwitch...");
         if (curModel instanceof Track){
             for (IPlayerViewCallback callback : mCallbackList) {
-                callback.onSoundSwitch((Track) curModel);
+                callback.onSoundSwitch((Track) curModel,mCurrentIndex);
             }
         }
     }
