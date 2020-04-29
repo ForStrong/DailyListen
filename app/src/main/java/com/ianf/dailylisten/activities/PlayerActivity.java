@@ -1,9 +1,15 @@
 package com.ianf.dailylisten.activities;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -14,6 +20,8 @@ import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.adapters.PlayerViewPagerAdapter;
 import com.ianf.dailylisten.interfaces.IPlayerViewCallback;
+import com.ianf.dailylisten.utils.LogUtil;
+import com.ianf.dailylisten.views.PlayerListPopupWin;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -32,7 +40,7 @@ import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl
 */
 
 public class PlayerActivity extends AppCompatActivity implements IPlayerViewCallback, ViewPager.OnPageChangeListener {
-
+    private static final String TAG = "PlayerActivity";
     private ImageView mPlayOrPauseIv;
     private PlayerPresenter mPlayerPresenter;
     private TextView mDurationTv;
@@ -67,6 +75,11 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         mPlayModeMap.put(PLAY_MODEL_RANDOM,PLAY_MODEL_LIST);
     }
 
+    private ImageView mPlayerListIv;
+    private PlayerListPopupWin mPopupWin;
+    private ValueAnimator mOutValueAnimator;
+    private ValueAnimator mEnterValueAnimator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +91,47 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         initView();
         initEvent();
         initPresenter();
+        //初始化popupWin弹入，退出时背景透明度动画
+        initAnimator();
+    }
+
+    private void initAnimator() {
+        //popupWin弹入时动画
+        mEnterValueAnimator = ValueAnimator.ofFloat(1.0f,0.6f);
+        mEnterValueAnimator.setDuration(500);
+        mEnterValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float alpha = (float)animation.getAnimatedValue();
+                LogUtil.d(TAG,"alpha -- > " + alpha);
+                //修改背景透明度
+                updateWinAlpha(alpha);
+            }
+        });
+
+        //popupWin退出时动画
+        mOutValueAnimator = ValueAnimator.ofFloat(0.6f,1.0f);
+        mOutValueAnimator.setDuration(500);
+        mOutValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float alpha = (float)animation.getAnimatedValue();
+                LogUtil.d(TAG,"alpha -- > " + alpha);
+                //修改背景透明度
+                updateWinAlpha(alpha);
+            }
+        });
+    }
+
+    /**
+     * 修改背景透明度
+     * @param alpha 背景透明度参数
+     */
+    private void updateWinAlpha(float alpha) {
+        Window window = getWindow();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        attributes.alpha = alpha;
+        window.setAttributes(attributes);
     }
 
     private void initPresenter() {
@@ -149,8 +203,26 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 mPlayerPresenter.setPlayMode(mCurrentMode);
             }
         });
+        //popWin弹出，设置背景透明度动画
+        mPlayerListIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //这个方法的参考是全屏幕呢，所以这里的y值基本上不使用。
+                mPopupWin.showAtLocation(v, Gravity.BOTTOM,0,0);
+                mEnterValueAnimator.start();
+            }
+        });
+        //popWin退出，设置背景透明度动画
+        mPopupWin.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                mOutValueAnimator.start();
+            }
+        });
+
+
     }
-    /*    设置播放器模式，mode取值为PlayMode中的下列之一：
+    /*设置播放器模式，mode取值为PlayMode中的下列之一：
      * 1.PLAY_MODEL_LIST列表播放
      * 2.PLAY_MODEL_SINGLE_LOOP 单曲循环播放
      * 3.PLAY_MODEL_LIST_LOOP列表循环
@@ -189,6 +261,9 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         mViewPagerAdapter = new PlayerViewPagerAdapter();
         mPlayerViewPager.setAdapter(mViewPagerAdapter);
         mSwitchPlayModelIv = findViewById(R.id.player_mode_switch_iv);
+        mPlayerListIv = findViewById(R.id.player_list);
+        //初始化popupWin
+        mPopupWin = new PlayerListPopupWin();
     }
 
     @Override

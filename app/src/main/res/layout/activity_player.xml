@@ -104,7 +104,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/play_next"
         app:layout_constraintTop_toTopOf="@+id/guideline27"
-        app:srcCompat="@mipmap/player_icon_list_normal" />
+        app:srcCompat="@drawable/selector_palyer_list" />
 
     <TextView
         android:id="@+id/current_position"
