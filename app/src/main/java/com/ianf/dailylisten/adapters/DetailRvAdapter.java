@@ -83,7 +83,7 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
         @SuppressLint("SetTextI18n")
         public void setViewData(int position) {
             Track track = mTracks.get(position);
-            mOrderTv.setText(position+"");
+            mOrderTv.setText((position + 1)+"");
             if (track != null) {
                 mDetailPlayCountTv.setText(track.getPlayCount()+"");
                 mDetailTitleTv.setText(track.getTrackTitle());

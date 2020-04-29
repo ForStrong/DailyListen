@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.base.BaseApplication;
+import com.ianf.dailylisten.views.PlayerListPopupWin;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.InnerHolder> {
     private List<Track> mTracks = new ArrayList<>();
     private int mCurrentIndex = 0;
+    private PlayerListPopupWin.OnPlayerListItemClickListener mItemListener;
     @NonNull
     @Override
     public PlayerListAdapter.InnerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -27,8 +29,14 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.In
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PlayerListAdapter.InnerHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PlayerListAdapter.InnerHolder holder, final int position) {
         holder.setData(position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mItemListener.onItemClickListener(position);
+            }
+        });
     }
 
     @Override
@@ -47,6 +55,10 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.In
     public void updateIndex(int currentIndex) {
         mCurrentIndex = currentIndex;
         notifyDataSetChanged();
+    }
+
+    public void setItemClickListener(PlayerListPopupWin.OnPlayerListItemClickListener listItemClickListener) {
+        mItemListener = listItemClickListener;
     }
 
     public class InnerHolder extends RecyclerView.ViewHolder {

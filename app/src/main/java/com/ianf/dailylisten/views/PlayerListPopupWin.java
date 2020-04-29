@@ -51,7 +51,6 @@ public class PlayerListPopupWin extends PopupWindow {
 
     private void initView() {
         mPlayerListCloseTv = mView.findViewById(R.id.play_list_close_tv);
-
         //初始化Rv
         mPlayerListRv = mView.findViewById(R.id.play_list_rv);
         mPlayerListAdapter = new PlayerListAdapter();
@@ -62,11 +61,20 @@ public class PlayerListPopupWin extends PopupWindow {
     }
 
     public void setTrackList(List<Track> tracks) {
-        //TODO:给rv设置数据
+        //给rv设置数据
         mPlayerListAdapter.setData(tracks);
     }
 
     public void updateIndex(int currentIndex) {
         mPlayerListAdapter.updateIndex(currentIndex);
+        mPlayerListRv.scrollToPosition(currentIndex);
+    }
+
+    public void setOnPlayerListItemClickListener(OnPlayerListItemClickListener listItemClickListener){
+        mPlayerListAdapter.setItemClickListener(listItemClickListener);
+    }
+
+    public interface OnPlayerListItemClickListener{
+        void onItemClickListener(int position);
     }
 }

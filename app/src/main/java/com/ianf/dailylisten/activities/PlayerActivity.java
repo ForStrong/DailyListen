@@ -218,6 +218,13 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 mOutValueAnimator.start();
             }
         });
+        //popWin的ItemView点击事件回调
+        mPopupWin.setOnPlayerListItemClickListener(new PlayerListPopupWin.OnPlayerListItemClickListener() {
+            @Override
+            public void onItemClickListener(int position) {
+                mPlayerPresenter.play(position);
+            }
+        });
 
 
     }
