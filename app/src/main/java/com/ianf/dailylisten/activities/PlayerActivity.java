@@ -1,6 +1,5 @@
 package com.ianf.dailylisten.activities;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -337,14 +336,15 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     }
 
     @Override
-    public void onTrackLoadedByDetail(Track track) {
+    public void onTrackLoadedByDetail(Track track, int currentIndex) {
         //跟新控件UI
         mTrackTitle.setText(track.getTrackTitle());
         mTrackNameTv.setText(track.getAnnouncer().getNickname());
+        mPopupWin.updateIndex(currentIndex);
     }
 
 
-
+    //更新UI，ViewPager，TrackTitle ，TrackName ，PopupWin
     @Override
     public void onSoundSwitch(Track curTrack, int currentIndex) {
         if (mTrackTitle != null){
@@ -354,13 +354,15 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
             mTrackNameTv.setText(curTrack.getAnnouncer().getNickname());
         }
         mPlayerViewPager.setCurrentItem(currentIndex);
+        mPopupWin.updateIndex(currentIndex);
     }
 
     //11.获取当前trackList
     @Override
     public void onTrackListLoaded(List<Track> tracks) {
+        //给ViewPager和popupWin设置tracks
         mViewPagerAdapter.setData(tracks);
-
+        mPopupWin.setTrackList(tracks);
     }
     //======================================IPlayerViewCallback end===============================
 

@@ -61,7 +61,7 @@ public interface IPlayerViewCallback {
     /**
      * 9.从detailActivity获取到Track
      */
-    void onTrackLoadedByDetail(Track track);
+    void onTrackLoadedByDetail(Track track, int currentIndex);
 
     /**
      * 10.切歌时调用
