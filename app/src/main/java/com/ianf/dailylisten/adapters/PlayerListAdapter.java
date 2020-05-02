@@ -34,7 +34,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.In
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemListener.onItemClickListener(position);
+                mItemListener.onItemClick(position);
             }
         });
     }

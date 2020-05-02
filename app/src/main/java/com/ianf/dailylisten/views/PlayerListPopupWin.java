@@ -3,16 +3,20 @@ package com.ianf.dailylisten.views;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.adapters.PlayerListAdapter;
 import com.ianf.dailylisten.base.BaseApplication;
+import com.ianf.dailylisten.utils.Constants;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.util.List;
 
@@ -22,6 +26,10 @@ public class PlayerListPopupWin extends PopupWindow {
     private TextView mPlayerListCloseTv;
     private PlayerListAdapter mPlayerListAdapter;
     private RecyclerView mPlayerListRv;
+    private ImageView mPlayModeIv;
+    private ConstraintLayout mPlayModeLayout;
+    private TextView mPlayModeTv;
+    private OnPlayModeChangeListener mPlayModeListener;
 
     public PlayerListPopupWin() {
         //设置宽高
@@ -46,6 +54,18 @@ public class PlayerListPopupWin extends PopupWindow {
             }
         });
 
+        mPlayModeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //改变播放模式
+                mPlayModeListener.onPlayModeChangeClick();
+                //改变UI
+                switchUIByModel(Constants.CURRENT_MODE);
+            }
+        });
+
+
+
 
     }
 
@@ -58,8 +78,38 @@ public class PlayerListPopupWin extends PopupWindow {
         //给rv设置布局和adapter
         mPlayerListRv.setLayoutManager(layoutManager);
         mPlayerListRv.setAdapter(mPlayerListAdapter);
+
+        mPlayModeIv = mView.findViewById(R.id.play_list_play_mode_iv);
+        mPlayModeTv = mView.findViewById(R.id.play_list_play_mode_tv);
+        mPlayModeLayout = mView.findViewById(R.id.play_list_play_mode_layout);
+
     }
 
+    private void switchUIByModel(XmPlayListControl.PlayMode currentMode) {
+        int rIvId = R.drawable.selector_play_mode_list_order;
+        int rTvId = R.string.play_mode_order_text;
+        switch (currentMode) {
+            case PLAY_MODEL_LIST:
+                rIvId = R.drawable.selector_play_mode_list_order;
+                rTvId = R.string.play_mode_order_text;
+                break;
+            case PLAY_MODEL_SINGLE_LOOP:
+                rIvId = R.drawable.selector_paly_mode_single_loop;
+                rTvId = R.string.play_mode_single_play_text;
+                break;
+            case PLAY_MODEL_LIST_LOOP:
+                rIvId = R.drawable.selector_paly_mode_list_order_looper;
+                rTvId = R.string.play_mode_list_play_text;
+                break;
+            case PLAY_MODEL_RANDOM:
+                rIvId = R.drawable.selector_paly_mode_random;
+                rTvId = R.string.play_mode_random_text;
+                break;
+        }
+        mPlayModeIv.setImageResource(rIvId);
+        mPlayModeTv.setText(rTvId);
+    }
+    //数据从presenter来
     public void setTrackList(List<Track> tracks) {
         //给rv设置数据
         mPlayerListAdapter.setData(tracks);
@@ -70,11 +120,22 @@ public class PlayerListPopupWin extends PopupWindow {
         mPlayerListRv.scrollToPosition(currentIndex);
     }
 
+
+    //在playerActivity注册，点击之后抛给playerActivity处理
     public void setOnPlayerListItemClickListener(OnPlayerListItemClickListener listItemClickListener){
         mPlayerListAdapter.setItemClickListener(listItemClickListener);
     }
 
     public interface OnPlayerListItemClickListener{
-        void onItemClickListener(int position);
+        void onItemClick(int position);
+    }
+
+    //在playerActivity注册，点击之后抛给playerActivity处理
+    public void setOnPlayModeChangeListener(OnPlayModeChangeListener listener){
+        this.mPlayModeListener = listener;
+    }
+
+    public interface OnPlayModeChangeListener{
+        void onPlayModeChangeClick();
     }
 }

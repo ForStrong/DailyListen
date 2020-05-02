@@ -7,6 +7,10 @@
         <item>历史</item>
     </string-array>
 
+    <string name="play_mode_order_text">顺序播放</string>
+    <string name="play_mode_random_text">随即播放</string>
+    <string name="play_mode_list_play_text">列表循环</string>
+    <string name="play_mode_single_play_text">单曲循环</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="network_error_msg">网络异常请,点击图标重试！</string>

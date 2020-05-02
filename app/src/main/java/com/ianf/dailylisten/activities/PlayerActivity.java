@@ -19,6 +19,7 @@ import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.adapters.PlayerViewPagerAdapter;
 import com.ianf.dailylisten.interfaces.IPlayerViewCallback;
+import com.ianf.dailylisten.utils.Constants;
 import com.ianf.dailylisten.utils.LogUtil;
 import com.ianf.dailylisten.views.PlayerListPopupWin;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
@@ -59,7 +60,7 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     private ViewPager mPlayerViewPager;
     private PlayerViewPagerAdapter mViewPagerAdapter;
     private ImageView mSwitchPlayModelIv;
-    private XmPlayListControl.PlayMode mCurrentMode = PLAY_MODEL_LIST;
+    
     private static HashMap<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> mPlayModeMap = new HashMap<>();
 /*   设置播放器模式，mode取值为PlayMode中的下列之一：
      * 1.PLAY_MODEL_LIST列表播放
@@ -198,8 +199,8 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
             @Override
             public void onClick(View v) {
                 //告诉presenter让他设置点击事件
-                mCurrentMode = mPlayModeMap.get(mCurrentMode);
-                mPlayerPresenter.setPlayMode(mCurrentMode);
+                Constants.CURRENT_MODE = mPlayModeMap.get(Constants.CURRENT_MODE);
+                mPlayerPresenter.setPlayMode(Constants.CURRENT_MODE);
             }
         });
         //popWin弹出，设置背景透明度动画
@@ -211,6 +212,7 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 mEnterValueAnimator.start();
             }
         });
+        
         //popWin退出，设置背景透明度动画
         mPopupWin.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -218,11 +220,21 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
                 mOutValueAnimator.start();
             }
         });
+        
         //popWin的ItemView点击事件回调
         mPopupWin.setOnPlayerListItemClickListener(new PlayerListPopupWin.OnPlayerListItemClickListener() {
             @Override
-            public void onItemClickListener(int position) {
+            public void onItemClick(int position) {
                 mPlayerPresenter.play(position);
+            }
+        });
+
+        //popWin的改变模式点击事件回调
+        mPopupWin.setOnPlayModeChangeListener(new PlayerListPopupWin.OnPlayModeChangeListener() {
+            @Override
+            public void onPlayModeChangeClick() {
+                Constants.CURRENT_MODE = mPlayModeMap.get(Constants.CURRENT_MODE);
+                mPlayerPresenter.setPlayMode(Constants.CURRENT_MODE);
             }
         });
 
@@ -313,8 +325,8 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     //设置播放器模式
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode mode) {
-        mCurrentMode = mode;
-        switchUIByModel(mCurrentMode);
+        Constants.CURRENT_MODE = mode;
+        switchUIByModel(Constants.CURRENT_MODE);
     }
     //如果用户没触摸进度条，自动跟新进度条和时间
     @Override
