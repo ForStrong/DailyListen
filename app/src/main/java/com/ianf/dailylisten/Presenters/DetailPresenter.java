@@ -22,6 +22,9 @@ public class DetailPresenter implements IDetailPresenter{
     private List<IDetailViewCallback> mCallbacks = new ArrayList<>();
     //单例设计模式
     private static DetailPresenter sDetailPresenter = null;
+    private int mCurrentPage;
+    private int mCurrentAlbumId;
+
     public static DetailPresenter getInstance() {
         if (sDetailPresenter == null) {
             synchronized (DetailPresenter.class){
@@ -67,7 +70,17 @@ public class DetailPresenter implements IDetailPresenter{
         for (IDetailViewCallback callback: mCallbacks) {
             callback.onLoading();
         }
+        mCurrentPage = page;
+        mCurrentAlbumId = album_id;
+        getDataByXM(album_id, mCurrentPage,false);
+    }
 
+    @Override
+    public void loadMore() {
+        mCurrentPage++;
+        getDataByXM(mCurrentAlbumId,mCurrentPage,true);
+    }
+    private void getDataByXM(int album_id, int page,boolean isLoadMore) {
         Map<String, String> map = new HashMap<>();
         map.put(DTransferConstants.ALBUM_ID, album_id+"");
         map.put(DTransferConstants.SORT, "asc");
@@ -80,7 +93,7 @@ public class DetailPresenter implements IDetailPresenter{
                 if (trackList != null) {
                     List<Track> tracks = trackList.getTracks();
                     LogUtil.d(TAG,"tracks size ->"+tracks.size());
-                    handleDetailResult(tracks);
+                    handleDetailResult(tracks,isLoadMore);
                 }
             }
 
@@ -100,25 +113,20 @@ public class DetailPresenter implements IDetailPresenter{
         }
     }
 
-    private void handleDetailResult(List<Track> tracks) {
-
+    private void handleDetailResult(List<Track> tracks,boolean isLoadMore) {
         if (tracks != null) {
-            if (tracks.size() > 0) {
+            if (!isLoadMore&&tracks.size() == 0) {
                 for (IDetailViewCallback callback: mCallbacks) {
-                    callback.onDetailListLoaded(tracks);
+                    callback.onEmpty();
                 }
             }else {
                 for (IDetailViewCallback callback: mCallbacks) {
-                    callback.onEmpty();
+                    callback.onDetailListLoaded(tracks,isLoadMore);
                 }
             }
         }
     }
 
-    @Override
-    public void loadMore() {
-
-    }
 
     @Override
     public void pullRefresh() {

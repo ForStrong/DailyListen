@@ -18,9 +18,11 @@ import com.ianf.dailylisten.base.BaseFragment;
 import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
 import com.ianf.dailylisten.utils.LogUtil;
 import com.ianf.dailylisten.views.UILoader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
 *create by IANDF in 2020/4/22
@@ -39,13 +41,12 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
 
     @Override
     protected View onSubViewLoad(final LayoutInflater inflater, final ViewGroup container) {
-        mUiLoader = new UILoader(getContext()) {
+        mUiLoader = new UILoader(Objects.requireNonNull(getContext())) {
             @Override
             public View getSuccessView(ViewGroup container) {
                 return initView(inflater,container);
             }
         };
-
         //创建Presenter
         mPresenter = RecommendPresenter.getInstance();
         //注册回调接口
@@ -65,6 +66,9 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         mRootView = inflater.inflate(R.layout.fragment_recommend,container,false);
         //初始化rv
         mAlbum_rv = mRootView.findViewById(R.id.album_rv);
+        RefreshLayout refreshLayout = mRootView.findViewById(R.id.recommendRefreshLayout);
+        refreshLayout.setEnablePureScrollMode(true);
+        refreshLayout.setReboundDuration(2000);
         //设置recyclerView的布局
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mRootView.getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -75,7 +79,6 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         mAlbumRvAdapter.setAlbumItemClickListener(this);
         //Rv设置adapter
         mAlbum_rv.setAdapter(mAlbumRvAdapter);
-
         return mRootView;
     }
 

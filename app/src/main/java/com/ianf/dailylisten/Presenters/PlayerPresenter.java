@@ -124,6 +124,11 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         //playByIndex会调用onSoundSwitch
         mXmPlayerManager.play(position);
     }
+    //判断是否设置过playList
+    @Override
+    public boolean hasPlayList() {
+        return isPlayListSet;
+    }
 
     @Override
     public void registerViewCallback(IPlayerViewCallback iPlayerViewCallback) {
@@ -233,8 +238,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         mCurrentIndex = mXmPlayerManager.getCurrentIndex();
         LogUtil.d(TAG,"onSoundSwitch...");
         if (curModel instanceof Track){
+            mCurrentTrack = (Track) curModel;
             for (IPlayerViewCallback callback : mCallbackList) {
-                callback.onSoundSwitch((Track) curModel,mCurrentIndex);
+                callback.onSoundSwitch(mCurrentTrack,mCurrentIndex);
             }
         }
     }

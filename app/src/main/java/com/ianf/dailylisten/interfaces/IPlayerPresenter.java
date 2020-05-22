@@ -55,4 +55,5 @@ public interface IPlayerPresenter extends IBasePresenter<IPlayerViewCallback> {
     //10 按Index播放歌曲
     void play(int position);
 
+    boolean hasPlayList();
 }
