@@ -19,6 +19,7 @@ public class RecommendPresenter implements IRecommendPresenter{
     private static RecommendPresenter RECOMMEND_PRESENTER = null;
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
     private String TAG = "RecommendPresenter";
+    private List<Album> mCurrentAlbums = null;
 
     //懒汉式单例设计模式
     public static RecommendPresenter getInstance(){
@@ -81,6 +82,8 @@ public class RecommendPresenter implements IRecommendPresenter{
                     for (IRecommendViewCallback callback: mCallbacks) {
                         callback.onRecommendListLoaded(albumList);
                     }
+
+                    mCurrentAlbums = albumList;
                 }else{
                     for (IRecommendViewCallback callback: mCallbacks) {
                         callback.onEmpty();
@@ -90,6 +93,8 @@ public class RecommendPresenter implements IRecommendPresenter{
         }
     }
 
+
+
     @Override
     public void loadMore() {
 
@@ -98,6 +103,11 @@ public class RecommendPresenter implements IRecommendPresenter{
     @Override
     public void pullRefresh() {
 
+    }
+
+    @Override
+    public Album getCurrentAlbum() {
+        return mCurrentAlbums.get(0);
     }
 
 

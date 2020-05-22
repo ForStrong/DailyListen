@@ -89,8 +89,8 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         //先初始化UI再写PlayerPresenter
         initView();
-        initEvent();
         initPresenter();
+        initEvent();
         //初始化popupWin弹入，退出时背景透明度动画
         initAnimator();
     }
@@ -112,14 +112,11 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         //popupWin退出时动画
         mOutValueAnimator = ValueAnimator.ofFloat(0.6f,1.0f);
         mOutValueAnimator.setDuration(500);
-        mOutValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float alpha = (float)animation.getAnimatedValue();
-                LogUtil.d(TAG,"alpha -- > " + alpha);
-                //修改背景透明度
-                updateWinAlpha(alpha);
-            }
+        mOutValueAnimator.addUpdateListener(animation -> {
+            float alpha = (float)animation.getAnimatedValue();
+            LogUtil.d(TAG,"alpha -- > " + alpha);
+            //修改背景透明度
+            updateWinAlpha(alpha);
         });
     }
 
@@ -139,22 +136,18 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         mPlayerPresenter = PlayerPresenter.getInstance();
         //注册回调接口
         mPlayerPresenter.registerViewCallback(this);
-        //进来就播放
-        mPlayerPresenter.play();
+
     }
 
     private void initEvent() {
-        mPlayOrPauseIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //1.如果是播放状态就让它暂停，如果是暂停状态就让他播放
-                if (mPlayerPresenter.isPlaying()){
-                    mPlayerPresenter.pause();
-                }else {
-                    mPlayerPresenter.play();
-                }
-
+        mPlayOrPauseIv.setOnClickListener(v -> {
+            //1.如果是播放状态就让它暂停，如果是暂停状态就让他播放
+            if (mPlayerPresenter.isPlaying()){
+                mPlayerPresenter.pause();
+            }else {
+                mPlayerPresenter.play();
             }
+
         });
 
         mDurationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -179,63 +172,34 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
             }
         });
 
-        mPlayPreIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPlayerPresenter.playPre();
-            }
-        });
+        mPlayPreIv.setOnClickListener(v -> mPlayerPresenter.playPre());
 
-        mPlayNextIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPlayerPresenter.playNext();
-            }
-        });
+        mPlayNextIv.setOnClickListener(v -> mPlayerPresenter.playNext());
         //给ViewPager设置点击事件
         mPlayerViewPager.addOnPageChangeListener(this);
 
-        mSwitchPlayModelIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //告诉presenter让他设置点击事件
-                Constants.CURRENT_MODE = mPlayModeMap.get(Constants.CURRENT_MODE);
-                mPlayerPresenter.setPlayMode(Constants.CURRENT_MODE);
-            }
+        mSwitchPlayModelIv.setOnClickListener(v -> {
+            //告诉presenter让他设置点击事件
+            Constants.CURRENT_MODE = mPlayModeMap.get(Constants.CURRENT_MODE);
+            mPlayerPresenter.setPlayMode(Constants.CURRENT_MODE);
         });
         //popWin弹出，设置背景透明度动画
-        mPlayerListIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //这个方法的参考是全屏幕呢，所以这里的y值基本上不使用。
-                mPopupWin.showAtLocation(v, Gravity.BOTTOM,0,0);
-                mEnterValueAnimator.start();
-            }
+        mPlayerListIv.setOnClickListener(v -> {
+            //这个方法的参考是全屏幕呢，所以这里的y值基本上不使用。
+            mPopupWin.showAtLocation(v, Gravity.BOTTOM,0,0);
+            mEnterValueAnimator.start();
         });
         
         //popWin退出，设置背景透明度动画
-        mPopupWin.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                mOutValueAnimator.start();
-            }
-        });
+        mPopupWin.setOnDismissListener(() -> mOutValueAnimator.start());
         
         //popWin的ItemView点击事件回调
-        mPopupWin.setOnPlayerListItemClickListener(new PlayerListPopupWin.OnPlayerListItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                mPlayerPresenter.play(position);
-            }
-        });
+        mPopupWin.setOnPlayerListItemClickListener(position -> mPlayerPresenter.play(position));
 
         //popWin的改变模式点击事件回调
-        mPopupWin.setOnPlayModeChangeListener(new PlayerListPopupWin.OnPlayModeChangeListener() {
-            @Override
-            public void onPlayModeChangeClick() {
-                Constants.CURRENT_MODE = mPlayModeMap.get(Constants.CURRENT_MODE);
-                mPlayerPresenter.setPlayMode(Constants.CURRENT_MODE);
-            }
+        mPopupWin.setOnPlayModeChangeListener(() -> {
+            Constants.CURRENT_MODE = mPlayModeMap.get(Constants.CURRENT_MODE);
+            mPlayerPresenter.setPlayMode(Constants.CURRENT_MODE);
         });
 
 
@@ -295,23 +259,21 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     //======================================IPlayerViewCallback start===============================
     @Override
     public void onPlayStart() {
-        if (mPlayOrPauseIv != null) {
-            mPlayOrPauseIv.setImageResource(R.drawable.selector_palyer_pause);
-        }
+        setUIByPlayState(true);
     }
 
     @Override
     public void onPlayPause() {
-        if (mPlayOrPauseIv != null) {
-            mPlayOrPauseIv.setImageResource(R.drawable.selector_player_play);
-        }
+        setUIByPlayState(false);
     }
 
     @Override
     public void onPlayStop() {
-        if (mPlayOrPauseIv != null) {
-            mPlayOrPauseIv.setImageResource(R.drawable.selector_player_play);
-        }
+        setUIByPlayState(false);
+    }
+
+    private void setUIByPlayState(boolean isPlay){
+        mPlayOrPauseIv.setImageResource(isPlay?R.drawable.selector_palyer_pause:R.drawable.selector_player_play);
     }
 
     @Override

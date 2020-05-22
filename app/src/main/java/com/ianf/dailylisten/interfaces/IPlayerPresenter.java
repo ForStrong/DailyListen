@@ -13,6 +13,7 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
     8.按进度条切换播放
     9.是否在播放
     10.按Index播放歌曲
+    11.是否有播放列表
  */
 
 public interface IPlayerPresenter extends IBasePresenter<IPlayerViewCallback> {
@@ -54,6 +55,8 @@ public interface IPlayerPresenter extends IBasePresenter<IPlayerViewCallback> {
 
     //10 按Index播放歌曲
     void play(int position);
-
+    //是否有播放列表
     boolean hasPlayList();
+
+    void playByAlbumId(int albumId);
 }
