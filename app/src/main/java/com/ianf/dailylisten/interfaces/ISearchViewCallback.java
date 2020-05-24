@@ -10,4 +10,8 @@ public interface ISearchViewCallback {
     void onHotWordsLoaded(List<HotWord> hotWordList);
     void onDataLoaded(List<Album> result);
     void onGuessWordsLoaded(List<QueryResult> keyWordList);
+    /**
+     *description:数据加载失败
+     */
+    void onError();
 }

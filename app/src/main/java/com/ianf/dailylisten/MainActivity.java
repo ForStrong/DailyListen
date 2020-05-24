@@ -75,6 +75,7 @@ public class MainActivity extends BaseActivity implements IPlayerViewCallback {
             Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
             startActivity(intent);
         });
+
     }
 
     private void playFirstRecommendAudio() {

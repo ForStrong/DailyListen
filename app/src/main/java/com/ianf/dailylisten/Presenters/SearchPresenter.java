@@ -55,6 +55,7 @@ public class SearchPresenter implements ISearchPresenter {
 
     }
 
+
     @Override
     public void registerViewCallback(ISearchViewCallback iSearchViewCallback) {
         if (iSearchViewCallback != null && !mCallbackList.contains(iSearchViewCallback)) {

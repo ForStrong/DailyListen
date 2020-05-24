@@ -13,4 +13,6 @@ public interface IRecommendViewCallback {
     void onNetworkError();
     //正在加载
     void onLoading();
+
+
 }

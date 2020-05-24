@@ -15,4 +15,5 @@ public interface ISearchPresenter extends IBasePresenter<ISearchViewCallback> {
     *description:根据输入单词生成联想词
     */
     void getGuessWords(String guessWord);
+
 }
