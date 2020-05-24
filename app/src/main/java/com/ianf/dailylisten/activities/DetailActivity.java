@@ -281,8 +281,10 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
     //切歌的时候调用
     @Override
     public void onSoundSwitch(Track curTrack, int currentIndex) {
-        mCurrentTrackTitle = curTrack.getTrackTitle();
-        mPlayControlTv.setText(mCurrentTrackTitle);
+        if (curTrack != null) {
+            mCurrentTrackTitle = curTrack.getTrackTitle();
+            mPlayControlTv.setText(mCurrentTrackTitle);
+        }
     }
 
     @Override

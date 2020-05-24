@@ -2,26 +2,22 @@ package com.ianf.dailylisten;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.Switch;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.ianf.dailylisten.Presenters.DetailPresenter;
 import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.Presenters.RecommendPresenter;
 import com.ianf.dailylisten.activities.PlayerActivity;
+import com.ianf.dailylisten.activities.SearchActivity;
 import com.ianf.dailylisten.adapters.IndicatorAdapter;
 import com.ianf.dailylisten.adapters.MainViewPagerAdapter;
 import com.ianf.dailylisten.base.BaseActivity;
-import com.ianf.dailylisten.interfaces.IDetailViewCallback;
-import com.ianf.dailylisten.interfaces.IPlayerPresenter;
 import com.ianf.dailylisten.interfaces.IPlayerViewCallback;
-import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
 import com.ianf.dailylisten.views.RoundTransform;
 import com.squareup.picasso.Picasso;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
@@ -109,6 +105,11 @@ public class MainActivity extends BaseActivity implements IPlayerViewCallback {
         viewPager.setAdapter(viewPagerAdapter);
         //bind viewPager and indicator
         ViewPagerHelper.bind(magicIndicator,viewPager);
+        RelativeLayout searchLayout = findViewById(R.id.search_layout);
+        searchLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
 
         //底部播放器控件初始化
         mPlayControlIv = findViewById(R.id.main_play_control);
