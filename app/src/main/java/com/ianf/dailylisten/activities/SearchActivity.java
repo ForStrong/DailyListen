@@ -1,10 +1,14 @@
 package com.ianf.dailylisten.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +20,9 @@ import android.widget.TextView;
 
 import com.ianf.dailylisten.Presenters.SearchPresenter;
 import com.ianf.dailylisten.R;
+import com.ianf.dailylisten.adapters.GuessWordsRvAdapter;
 import com.ianf.dailylisten.interfaces.ISearchViewCallback;
+import com.ianf.dailylisten.utils.LogUtil;
 import com.ianf.dailylisten.views.FlowTextLayout;
 import com.ianf.dailylisten.views.UILoader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -29,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements ISearchViewCallback {
-
+    private static final String TAG = "SearchActivity";
     private TextView mSearchTv;
     private EditText mKeywordEt;
     private ImageView mDeleteIv;
@@ -43,6 +49,7 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
     private RecyclerView mDataLoadedRv;
     private RecyclerView mGuessWordsRv;
     private UILoader mUiLoader;
+    private GuessWordsRvAdapter mGuessWordsRvAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +62,8 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
     }
 
     private void initEvent() {
-
+        mDeleteIv.setOnClickListener(v -> mKeywordEt.setText(""));
+        mBackIv.setOnClickListener(v -> finish());
     }
 
     private void initPresenter() {
@@ -73,6 +81,31 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
             mKeywordEt.requestFocus();
             mInputMethodManager.showSoftInput(mKeywordEt,InputMethodManager.SHOW_IMPLICIT);
         },TIME_SHOW_IMM);
+        //用户输入字体改变时，去获取联想词
+        mKeywordEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String word = s.toString();
+                if (word.length() > 0) {
+                    if (mSearchPresenter != null) {
+                        mSearchPresenter.getGuessWords(word);
+                    }
+                }else {
+                    mSearchPresenter.getHotWords();
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         mSearchTv = findViewById(R.id.search_tv);
         mSearchContainer = findViewById(R.id.search_container_layout);
         mUiLoader = new UILoader(this) {
@@ -97,6 +130,10 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
         mDataLoadedRv = successView.findViewById(R.id.search_dataLoadedRv);
         //联想词
         mGuessWordsRv = successView.findViewById(R.id.search_guessWordsRv);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mGuessWordsRv.setLayoutManager(linearLayoutManager);
+        mGuessWordsRvAdapter = new GuessWordsRvAdapter();
+        mGuessWordsRv.setAdapter(mGuessWordsRvAdapter);
         return successView;
     }
 
@@ -105,6 +142,8 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
     public void onHotWordsLoaded(List<HotWord> hotWordList) {
         hideSuccessView();
         mHotWordsLayout.setVisibility(View.VISIBLE);
+        LogUtil.d(TAG,"hotWordList size ->"+hotWordList.size());
+        //改变UILoader状态
         if (mUiLoader != null) {
             mUiLoader.upDataUIStatus(UILoader.UIStatus.SUCCESS);
         }
@@ -126,7 +165,14 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
 
     @Override
     public void onGuessWordsLoaded(List<QueryResult> keyWordList) {
-
+        hideSuccessView();
+        LogUtil.d(TAG,"keyWordList size ->"+keyWordList.size());
+        mGuessWordsRv.setVisibility(View.VISIBLE);
+        if (mUiLoader != null) {
+            mUiLoader.upDataUIStatus(UILoader.UIStatus.SUCCESS);
+        }
+        mGuessWordsRvAdapter.setData(keyWordList);
+        mGuessWordsRvAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -140,7 +186,6 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
         mHotWordsLayout.setVisibility(View.GONE);
     }
     //=======================================viewCallback end=======================================
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

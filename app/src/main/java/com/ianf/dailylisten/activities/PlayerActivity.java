@@ -318,10 +318,12 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
 
     @Override
     public void onTrackLoadedByDetail(Track track, int currentIndex) {
-        //跟新控件UI
-        mTrackTitle.setText(track.getTrackTitle());
-        mTrackNameTv.setText(track.getAnnouncer().getNickname());
-        mPopupWin.updateIndex(currentIndex);
+        if (track != null) {
+            //跟新控件UI
+            mTrackTitle.setText(track.getTrackTitle());
+            mTrackNameTv.setText(track.getAnnouncer().getNickname());
+            mPopupWin.updateIndex(currentIndex);
+        }
     }
 
 

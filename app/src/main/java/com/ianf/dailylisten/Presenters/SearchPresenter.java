@@ -5,8 +5,11 @@ import com.ianf.dailylisten.interfaces.ISearchViewCallback;
 import com.ianf.dailylisten.utils.LogUtil;
 import com.ianf.dailylisten.utils.XimalayApi;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
+import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 import com.ximalaya.ting.android.opensdk.model.word.HotWord;
 import com.ximalaya.ting.android.opensdk.model.word.HotWordList;
+import com.ximalaya.ting.android.opensdk.model.word.QueryResult;
+import com.ximalaya.ting.android.opensdk.model.word.SuggestWords;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +17,11 @@ import java.util.List;
 public class SearchPresenter implements ISearchPresenter {
     private List<ISearchViewCallback> mCallbackList = new ArrayList<>();
     private static final String TAG = "SearchPresenter";
+    private XimalayApi mXimalayApi;
+    private List<HotWord> mHotWords = new ArrayList<>();
 
     private SearchPresenter() {
-
+        mXimalayApi = XimalayApi.getXimalayApi();
     }
 
     private static class SearchPresenterHolder {
@@ -29,20 +34,26 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void getHotWords() {
-        XimalayApi.getXimalayApi().getHotWords(new IDataCallBack<HotWordList>() {
-            @Override
-            public void onSuccess(HotWordList hotWordList) {
-                List<HotWord> hotWords = hotWordList.getHotWordList();
-                for (ISearchViewCallback iSearchViewCallback : mCallbackList) {
-                    iSearchViewCallback.onHotWordsLoaded(hotWords);
+        if (mHotWords.size() > 0) {
+            for (ISearchViewCallback iSearchViewCallback : mCallbackList) {
+                iSearchViewCallback.onHotWordsLoaded(mHotWords);
+            }
+        }else {
+            mXimalayApi.getHotWords(new IDataCallBack<HotWordList>() {
+                @Override
+                public void onSuccess(HotWordList hotWordList) {
+                    mHotWords = hotWordList.getHotWordList();
+                    for (ISearchViewCallback iSearchViewCallback : mCallbackList) {
+                        iSearchViewCallback.onHotWordsLoaded(mHotWords);
+                    }
                 }
-            }
 
-            @Override
-            public void onError(int i, String s) {
+                @Override
+                public void onError(int i, String s) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override
@@ -52,7 +63,22 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void getGuessWords(String guessWord) {
+        mXimalayApi.getSuggestWord(guessWord, new IDataCallBack<SuggestWords>() {
+            @Override
+            public void onSuccess(SuggestWords suggestWords) {
+                if (suggestWords != null) {
+                    List<QueryResult> keyWordList = suggestWords.getKeyWordList();
+                    for (ISearchViewCallback iSearchViewCallback : mCallbackList) {
+                        iSearchViewCallback.onGuessWordsLoaded(keyWordList);
+                    }
+                }
+            }
 
+            @Override
+            public void onError(int i, String s) {
+
+            }
+        });
     }
 
 
