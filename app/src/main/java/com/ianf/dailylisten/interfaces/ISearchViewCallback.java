@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ISearchViewCallback {
     void onHotWordsLoaded(List<HotWord> hotWordList);
-    void onDataLoaded(List<Album> result);
+    void onDataLoaded(List<Album> result,boolean isLoadMore);
     void onGuessWordsLoaded(List<QueryResult> keyWordList);
     /**
      *description:数据加载失败

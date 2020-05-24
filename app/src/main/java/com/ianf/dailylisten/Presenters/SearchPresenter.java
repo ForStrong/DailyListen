@@ -2,10 +2,10 @@ package com.ianf.dailylisten.Presenters;
 
 import com.ianf.dailylisten.interfaces.ISearchPresenter;
 import com.ianf.dailylisten.interfaces.ISearchViewCallback;
-import com.ianf.dailylisten.utils.LogUtil;
 import com.ianf.dailylisten.utils.XimalayApi;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
-import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
+import com.ximalaya.ting.android.opensdk.model.album.Album;
+import com.ximalaya.ting.android.opensdk.model.album.SearchAlbumList;
 import com.ximalaya.ting.android.opensdk.model.word.HotWord;
 import com.ximalaya.ting.android.opensdk.model.word.HotWordList;
 import com.ximalaya.ting.android.opensdk.model.word.QueryResult;
@@ -19,6 +19,8 @@ public class SearchPresenter implements ISearchPresenter {
     private static final String TAG = "SearchPresenter";
     private XimalayApi mXimalayApi;
     private List<HotWord> mHotWords = new ArrayList<>();
+    private String mCurrentKeyword;
+    private int mCurrentPage = 1;
 
     private SearchPresenter() {
         mXimalayApi = XimalayApi.getXimalayApi();
@@ -58,6 +60,33 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void getDataByKeyword(String keyword) {
+        mCurrentKeyword = keyword;
+        searchByKeyword(mCurrentKeyword,false);
+    }
+
+    private void searchByKeyword(String keyword,boolean isLoadMore) {
+
+        if (!isLoadMore) {
+            mCurrentPage = 1;
+        }else {
+            mCurrentPage++;
+        }
+        mXimalayApi.searchByKeyword(keyword, mCurrentPage, new IDataCallBack<SearchAlbumList>() {
+            @Override
+            public void onSuccess(SearchAlbumList searchAlbumList) {
+                List<Album> albums = searchAlbumList.getAlbums();
+                for (ISearchViewCallback iSearchViewCallback : mCallbackList) {
+                    iSearchViewCallback.onDataLoaded(albums,isLoadMore);
+                }
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                for (ISearchViewCallback iSearchViewCallback : mCallbackList) {
+                    iSearchViewCallback.onError();
+                }
+            }
+        });
 
     }
 
@@ -79,6 +108,11 @@ public class SearchPresenter implements ISearchPresenter {
 
             }
         });
+    }
+
+    @Override
+    public void loadMore() {
+        searchByKeyword(mCurrentKeyword,true);
     }
 
 

@@ -18,6 +18,7 @@ import java.util.List;
 public class GuessWordsRvAdapter extends RecyclerView.Adapter<GuessWordsRvAdapter.GuessWordsHolder> {
     private static final String TAG = "GuessWordsRvAdapter";
     private List<QueryResult> mGuessResults = new ArrayList<>();
+    private OnItemClickListener mItemClickListener = null;
     @NonNull
     @Override
     public GuessWordsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,6 +32,7 @@ public class GuessWordsRvAdapter extends RecyclerView.Adapter<GuessWordsRvAdapte
         QueryResult queryResult = mGuessResults.get(position);
         String keyword = queryResult.getKeyword();
         holder.mGuessSearchTv.setText(keyword);
+        holder.itemView.setOnClickListener(v -> mItemClickListener.onItemClicked(keyword));
     }
 
     @Override
@@ -51,5 +53,13 @@ public class GuessWordsRvAdapter extends RecyclerView.Adapter<GuessWordsRvAdapte
             super(itemView);
             mGuessSearchTv = itemView.findViewById(R.id.guess_searchItem);
         }
+    }
+
+    public void setOnItemClickListener(OnItemClickListener itemClickListener){
+        mItemClickListener = itemClickListener;
+    }
+
+    public interface OnItemClickListener{
+        void onItemClicked(String keyword);
     }
 }
