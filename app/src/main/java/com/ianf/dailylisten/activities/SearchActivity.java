@@ -45,18 +45,17 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
     private ImageView mDeleteIv;
     private ImageView mBackIv;
     private SearchPresenter mSearchPresenter;
-    private FrameLayout mSearchContainer;
     private static final int TIME_SHOW_IMM = 500;
     private InputMethodManager mInputMethodManager;
     private FlowTextLayout mHotWordsLayout;
     private SmartRefreshLayout mDataLoadedRefreshLayout;
-    private RecyclerView mDataLoadedRv;
     private RecyclerView mGuessWordsRv;
     private UILoader mUiLoader;
     private GuessWordsRvAdapter mGuessWordsRvAdapter;
     private AlbumRvAdapter mAlbumRvAdapter;
     private List<Album> mAlbumList = new ArrayList<>();
     private boolean mIsUser = true;
+    private String mCurrentKeyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,13 +75,13 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
         });
         mBackIv.setOnClickListener(v -> finish());
         mSearchTv.setOnClickListener(v -> {
-            String keyWord = mKeywordEt.getText().toString().trim();
-            if (TextUtils.isEmpty(keyWord)) {
+            mCurrentKeyword = mKeywordEt.getText().toString().trim();
+            if (TextUtils.isEmpty(mCurrentKeyword)) {
                 //可以给个提示
                 Toast.makeText(SearchActivity.this, "搜索关键字不能为空.", Toast.LENGTH_SHORT).show();
             } else {
-                mSearchPresenter.getDataByKeyword(keyWord);
                 mUiLoader.upDataUIStatus(UILoader.UIStatus.LOADING);
+                mSearchPresenter.getDataByKeyword(mCurrentKeyword);
             }
         });
         //用户输入字体改变时，去获取联想词
@@ -114,7 +113,7 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
         });
 
         mHotWordsLayout.setClickListener(this::doSearch);
-
+        mGuessWordsRvAdapter.setOnItemClickListener(this::doSearch);
         mDataLoadedRefreshLayout.setOnLoadMoreListener(refreshLayout -> mSearchPresenter.loadMore());
     }
 
@@ -134,7 +133,7 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
             mInputMethodManager.showSoftInput(mKeywordEt, InputMethodManager.SHOW_IMPLICIT);
         }, TIME_SHOW_IMM);
         mSearchTv = findViewById(R.id.search_tv);
-        mSearchContainer = findViewById(R.id.search_container_layout);
+        FrameLayout searchContainer = findViewById(R.id.search_container_layout);
         mUiLoader = new UILoader(this) {
             @Override
             public View getSuccessView(ViewGroup container) {
@@ -144,7 +143,12 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
         if (mUiLoader.getParent() instanceof ViewGroup) {
             ((ViewGroup) mUiLoader.getParent()).removeView(mUiLoader);
         }
-        mSearchContainer.addView(mUiLoader);
+        mUiLoader.setOnRetryListener(() -> {
+            if (mCurrentKeyword != null) {
+                doSearch(mCurrentKeyword);
+            }
+        });
+        searchContainer.addView(mUiLoader);
     }
 
     private View initSuccessView() {
@@ -154,7 +158,7 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
         mHotWordsLayout = successView.findViewById(R.id.search_hotWords_layout);
         //搜索结果
         mDataLoadedRefreshLayout = successView.findViewById(R.id.search_dataLoadedRefreshLayout);
-        mDataLoadedRv = successView.findViewById(R.id.search_dataLoadedRv);
+        RecyclerView dataLoadedRv = successView.findViewById(R.id.search_dataLoadedRv);
         LinearLayoutManager linearDataLoadedLayoutManager = new LinearLayoutManager(this);
         mAlbumRvAdapter = new AlbumRvAdapter();
         mAlbumRvAdapter.setAlbumItemClickListener((tag, album) -> {
@@ -162,8 +166,8 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
             Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
             startActivity(intent);
         });
-        mDataLoadedRv.setLayoutManager(linearDataLoadedLayoutManager);
-        mDataLoadedRv.setAdapter(mAlbumRvAdapter);
+        dataLoadedRv.setLayoutManager(linearDataLoadedLayoutManager);
+        dataLoadedRv.setAdapter(mAlbumRvAdapter);
         mDataLoadedRefreshLayout.setEnableRefresh(false);
         mDataLoadedRefreshLayout.setEnableOverScrollBounce(true);
         mDataLoadedRefreshLayout.setEnableOverScrollDrag(true);
@@ -172,7 +176,7 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
         LinearLayoutManager linearGuessWordsLayoutManager = new LinearLayoutManager(this);
         mGuessWordsRv.setLayoutManager(linearGuessWordsLayoutManager);
         mGuessWordsRvAdapter = new GuessWordsRvAdapter();
-        mGuessWordsRvAdapter.setOnItemClickListener(keyword -> doSearch(keyword));
+
         mGuessWordsRv.setAdapter(mGuessWordsRvAdapter);
         return successView;
     }
@@ -260,6 +264,7 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
 
 
     private void doSearch(String keyword) {
+        mCurrentKeyword = keyword;
         if (mUiLoader != null) {
             mUiLoader.upDataUIStatus(UILoader.UIStatus.LOADING);
         }
@@ -270,4 +275,5 @@ public class SearchActivity extends AppCompatActivity implements ISearchViewCall
             mKeywordEt.setSelection(keyword.length());
         }
     }
+
 }

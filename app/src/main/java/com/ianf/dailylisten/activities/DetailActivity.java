@@ -39,9 +39,7 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
     private DetailPresenter mDetailPresenter;
     private Album mAlbum;
     private int mCurrentPage = 1;
-    private RecyclerView mDetailRv;
     private DetailRvAdapter mDetailRvAdapter;
-    private FrameLayout mDetailContainer;
     private UILoader mUILoader;
     private ImageView mPlayControlIv;
     private TextView mPlayControlTv;
@@ -72,9 +70,9 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
         //注册网络不佳时重新加载的接口
         mUILoader.setOnRetryListener(this);
         //初始化DetailContainer，并清空View,然后添加UILoader
-        mDetailContainer = findViewById(R.id.detail_container);
-        mDetailContainer.removeAllViews();
-        mDetailContainer.addView(mUILoader);
+        FrameLayout detailContainer = findViewById(R.id.detail_container);
+        detailContainer.removeAllViews();
+        detailContainer.addView(mUILoader);
 
         //初始化顶部UI
         initBaseView();
@@ -94,21 +92,18 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
             mPlayControlTv.setText(mCurrentTrackTitle);
         }
 
-        mPlayControlIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //如果设置过PlayList实现点击播放和暂停的功能，没有设置过，默认播放第一首
-                if (mPlayerPresenter.hasPlayList()) {
-                    if (mPlayerPresenter.isPlaying()) {
-                        mPlayerPresenter.pause();
-                    } else {
-                        mPlayerPresenter.play();
-                    }
+        mPlayControlIv.setOnClickListener(v -> {
+            //如果设置过PlayList实现点击播放和暂停的功能，没有设置过，默认播放第一首
+            if (mPlayerPresenter.hasPlayList()) {
+                if (mPlayerPresenter.isPlaying()) {
+                    mPlayerPresenter.pause();
                 } else {
-                    mPlayerPresenter.setTrackList(mTracks, DEFAULT_POSITION);
+                    mPlayerPresenter.play();
                 }
-
+            } else {
+                mPlayerPresenter.setTrackList(mTracks, DEFAULT_POSITION);
             }
+
         });
     }
 
@@ -138,16 +133,16 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
                 refreshLayout1.finishLoadMore(2000);
             }
         );
-        mDetailRv = view.findViewById(R.id.detail_rv);
+        RecyclerView detailRv = view.findViewById(R.id.detail_rv);
         //设置布局管理器
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mDetailRv.setLayoutManager(layoutManager);
+        detailRv.setLayoutManager(layoutManager);
         //设置adapter
         mDetailRvAdapter = new DetailRvAdapter();
         //给Adapter设置itemView点击事件
         mDetailRvAdapter.setItemClickListener(this);
         //Rv设置Adapter
-        mDetailRv.setAdapter(mDetailRvAdapter);
+        detailRv.setAdapter(mDetailRvAdapter);
         return view;
     }
 

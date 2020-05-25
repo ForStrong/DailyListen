@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -29,7 +28,10 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.*;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP;
 
 /**
 *create by IANDF in 2020/4/27
@@ -99,14 +101,11 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         //popupWin弹入时动画
         mEnterValueAnimator = ValueAnimator.ofFloat(1.0f,0.6f);
         mEnterValueAnimator.setDuration(500);
-        mEnterValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float alpha = (float)animation.getAnimatedValue();
-                LogUtil.d(TAG,"alpha -- > " + alpha);
-                //修改背景透明度
-                updateWinAlpha(alpha);
-            }
+        mEnterValueAnimator.addUpdateListener(animation -> {
+            float alpha = (float)animation.getAnimatedValue();
+            LogUtil.d(TAG,"alpha -- > " + alpha);
+            //修改背景透明度
+            updateWinAlpha(alpha);
         });
 
         //popupWin退出时动画
