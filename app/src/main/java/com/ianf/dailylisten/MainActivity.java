@@ -28,6 +28,7 @@ import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.ViewPagerHelper;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -91,13 +92,15 @@ public class MainActivity extends BaseActivity implements IPlayerViewCallback {
         magicIndicator.setBackgroundColor(getResources().getColor(R.color.main_color));
         CommonNavigator commonNavigator = new CommonNavigator(this);
         //自定义Indicator适配器
-        IndicatorAdapter adapter = new IndicatorAdapter(this,viewPager);
+        List<String> pageStringList = Arrays.asList(this.getResources().getStringArray(R.array.main_title));
+        IndicatorAdapter adapter = new IndicatorAdapter(this,viewPager,pageStringList);
         //给CommonNavigator设置适配器
         commonNavigator.setAdapter(adapter);
         //根据控件宽度自动调节Item的位置,平分宽度
         commonNavigator.setAdjustMode(true);
         //给Indicator设置导航栏
         magicIndicator.setNavigator(commonNavigator);
+
         //init viewPager
         FragmentManager fragmentManager = getSupportFragmentManager();
         //自定义ViewPager适配器
@@ -106,6 +109,7 @@ public class MainActivity extends BaseActivity implements IPlayerViewCallback {
         viewPager.setAdapter(viewPagerAdapter);
         //bind viewPager and indicator
         ViewPagerHelper.bind(magicIndicator,viewPager);
+
         RelativeLayout searchLayout = findViewById(R.id.search_layout);
         searchLayout.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);

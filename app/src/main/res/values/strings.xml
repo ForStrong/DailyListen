@@ -7,6 +7,11 @@
         <item>历史</item>
     </string-array>
 
+    <string-array name="login_title">
+        <item>用户登录</item>
+        <item>用户注册</item>
+    </string-array>
+
     <string name="play_mode_order_text">顺序播放</string>
     <string name="play_mode_random_text">随即播放</string>
     <string name="play_mode_list_play_text">列表循环</string>

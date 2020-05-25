@@ -10,6 +10,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- target >=28 需要设置此权限 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <!--保持CPU 运转，屏幕和键盘灯有可能是关闭的,用于文件上传和下载 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--获取sd卡写的权限，用于文件上传和下载-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:name=".base.BaseApplication"
         android:allowBackup="true"
@@ -20,21 +24,28 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.SearchActivity"></activity>
-        <activity android:name=".activities.PlayerActivity" />
-        <activity android:name=".activities.DetailActivity" />
-        <activity android:name=".base.BaseActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.SearchActivity" />
+        <activity android:name=".activities.PlayerActivity" />
+        <activity android:name=".activities.DetailActivity" />
+        <activity android:name=".base.BaseActivity" />
+        <activity android:name=".MainActivity">
+
+        </activity>
 
         <service
             android:name="com.ximalaya.ting.android.opensdk.player.service.XmPlayerService"
             android:process=":player" />
+        <provider
+            android:name="cn.bmob.v3.util.BmobContentProvider"
+            android:authorities="com.ianf.dailylisten.BmobContentProvider">
+        </provider>
     </application>
 
 </manifest>

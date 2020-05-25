@@ -18,6 +18,8 @@ import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 
+import cn.bmob.v3.Bmob;
+
 
 public class BaseApplication extends Application {
 
@@ -44,6 +46,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Bmob.initialize(this, "3ebc6a1db22ac9b6fc824f688a75aac2");
         //集成喜马拉雅sdk
         CommonRequest mXimalaya = CommonRequest.getInstanse();
         if(DTransferConstants.isRelease) {

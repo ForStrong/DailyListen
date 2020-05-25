@@ -15,6 +15,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.indicators.Li
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.SimplePagerTitleView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 /**
@@ -26,8 +27,8 @@ import java.util.List;
 public class IndicatorAdapter extends CommonNavigatorAdapter {
     private List<String> mList;
     private ViewPager mViewPager;
-    public IndicatorAdapter(Context context, ViewPager viewPager) {
-        mList = Arrays.asList(context.getResources().getStringArray(R.array.main_title));
+    public IndicatorAdapter(Context context, ViewPager viewPager,List<String> pageStrings) {
+        mList = pageStrings;
         mViewPager = viewPager;
     }
 
@@ -50,12 +51,7 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
         //设置字体大小，单位sp
         colorTransitionPagerTitleView.setTextSize(18);
         colorTransitionPagerTitleView.setText(mList.get(index));
-        colorTransitionPagerTitleView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewPager.setCurrentItem(index);
-            }
-        });
+        colorTransitionPagerTitleView.setOnClickListener(v -> mViewPager.setCurrentItem(index));
         return colorTransitionPagerTitleView;
     }
 
