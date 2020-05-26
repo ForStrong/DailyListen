@@ -16,11 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ianf.dailylisten.Presenters.DetailPresenter;
 import com.ianf.dailylisten.Presenters.PlayerPresenter;
+import com.ianf.dailylisten.Presenters.SubPresenter;
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.adapters.DetailRvAdapter;
 import com.ianf.dailylisten.base.BaseActivity;
 import com.ianf.dailylisten.interfaces.IDetailViewCallback;
 import com.ianf.dailylisten.interfaces.IPlayerViewCallback;
+import com.ianf.dailylisten.interfaces.ISubViewCallback;
+import com.ianf.dailylisten.utils.LogUtil;
 import com.ianf.dailylisten.views.RoundTransform;
 import com.ianf.dailylisten.views.UILoader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -31,8 +34,8 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.util.List;
 
-public class DetailActivity extends BaseActivity implements IDetailViewCallback, UILoader.OnRetryClickListener, DetailRvAdapter.OnItemClickListener, IPlayerViewCallback {
-
+public class DetailActivity extends BaseActivity implements IDetailViewCallback, UILoader.OnRetryClickListener, DetailRvAdapter.OnItemClickListener, IPlayerViewCallback, ISubViewCallback {
+    private static final String TAG = "DetailActivity";
     private ImageView mSmallCoverIv;
     private TextView mAlbumTitleTv;
     private TextView mAlbumAuthorTv;
@@ -49,6 +52,9 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
     //    private Track mCurrentTrack;
     private String mCurrentTrackTitle;
     private RefreshLayout mRefreshLayout;
+    private TextView mSubTv;
+    private SubPresenter mSubPresenter;
+    private boolean mIsCurrentAlbumSub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +79,17 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
         FrameLayout detailContainer = findViewById(R.id.detail_container);
         detailContainer.removeAllViews();
         detailContainer.addView(mUILoader);
+        //初始化Presenter
 
         //初始化顶部UI
         initBaseView();
-        //初始化Presenter
+
         initPresenter();
+        mSubPresenter.isSub(mAlbum);
+
         //初始化顶部UI点击事件
         initBaseEvent();
+
 
     }
 
@@ -105,6 +115,15 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
             }
 
         });
+
+        mSubTv.setOnClickListener(v -> {
+            //订阅了就删除，没订阅就添加
+            if (mIsCurrentAlbumSub){
+                mSubPresenter.deleteSubscription(mAlbum);
+            }else {
+                mSubPresenter.addSubscription(mAlbum);
+            }
+        });
     }
 
     //初始化顶部UI
@@ -114,6 +133,8 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
         mAlbumAuthorTv = findViewById(R.id.tv_album_author);
         mPlayControlIv = findViewById(R.id.detail_play_control);
         mPlayControlTv = findViewById(R.id.play_control_tv);
+        mSubTv = findViewById(R.id.detail_subTv);
+
         //实现跑马灯效果必备
         mPlayControlTv.setSelected(true);
     }
@@ -158,6 +179,10 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
 
         mPlayerPresenter = PlayerPresenter.getInstance();
         mPlayerPresenter.registerViewCallback(this);
+
+        //初始化订阅的presenter
+        mSubPresenter = SubPresenter.getInstance();
+        mSubPresenter.registerViewCallback(this);
     }
 
     //获取到从recommendFragment来的album，给控件添加内容
@@ -208,6 +233,7 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
         super.onDestroy();
         mDetailPresenter.unRegisterViewCallback(this);
         mPlayerPresenter.unRegisterViewCallback(this);
+        mSubPresenter.unRegisterViewCallback(this);
     }
 
     @Override
@@ -222,6 +248,15 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
         //调转到播放页面
         Intent intent = new Intent(this, PlayerActivity.class);
         startActivity(intent);
+    }
+
+    //根据mIsCurrentAlbumSub改变mSubTv的UI
+    private void updateSubTv(){
+        if (mIsCurrentAlbumSub){
+            mSubTv.setText("取消订阅");
+        }else {
+            mSubTv.setText("+订阅");
+        }
     }
 
     //==================================playerPresenterViewCallback start===============================
@@ -287,4 +322,30 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
 
     }
 //==================================playerPresenterViewCallback end===============================
+
+//==================================subPresenterViewCallback start=================================
+    @Override
+    public void onAddResult(boolean isSuccess) {
+        mIsCurrentAlbumSub = isSuccess;
+        updateSubTv();
+    }
+
+    @Override
+    public void onDeleteResult(boolean isSuccess) {
+        mIsCurrentAlbumSub = !isSuccess;
+        updateSubTv();
+    }
+
+    @Override
+    public void onSubscriptionsLoaded(List<Album> albums) {
+
+    }
+
+    @Override
+    public void isSub(boolean isSub) {
+        mIsCurrentAlbumSub = isSub;
+        updateSubTv();
+    }
+//==================================subPresenterViewCallback end=================================
 }
+

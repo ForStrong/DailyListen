@@ -19,6 +19,8 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private  ViewPager mLoginViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,13 +30,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initView() {
         MagicIndicator indicator = findViewById(R.id.login_indicator);
-        ViewPager loginViewPager = findViewById(R.id.login_viewPager);
+        mLoginViewPager = findViewById(R.id.login_viewPager);
         //初始化indicator
         indicator.setBackgroundColor(getResources().getColor(R.color.main_color,null));
         //初始化导航栏
         CommonNavigator commonNavigator = new CommonNavigator(this);
         List<String> pageTitles = Arrays.asList(getResources().getStringArray(R.array.login_title));
-        IndicatorAdapter indicatorAdapter = new IndicatorAdapter(this, loginViewPager,pageTitles);
+        IndicatorAdapter indicatorAdapter = new IndicatorAdapter(this, mLoginViewPager,pageTitles);
         commonNavigator.setAdapter(indicatorAdapter);
         commonNavigator.setAdjustMode(true);
         //indicator设置导航栏
@@ -42,8 +44,18 @@ public class LoginActivity extends AppCompatActivity {
         //初始化ViewPager
         FragmentManager fragmentManager = getSupportFragmentManager();
         LoginViewPagerAdapter adapter = new LoginViewPagerAdapter(fragmentManager);
-        loginViewPager.setAdapter(adapter);
+        mLoginViewPager.setAdapter(adapter);
         //indicator和ViewPager绑定在一起
-        ViewPagerHelper.bind(indicator, loginViewPager);
+        ViewPagerHelper.bind(indicator, mLoginViewPager);
+    }
+
+    public  void switchFragment(int index){
+        mLoginViewPager.setCurrentItem(index);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mLoginViewPager = null;
     }
 }

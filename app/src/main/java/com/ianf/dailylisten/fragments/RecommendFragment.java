@@ -120,7 +120,6 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
 
     @Override
     public void albumItemClickListener(int tag, Album album) {
-        LogUtil.d(TAG,"tag -->" + tag);
         DetailPresenter.getInstance().setAlbumByRecommend(album);
         Intent intent = new Intent(getContext(), DetailActivity.class);
         startActivity(intent);

@@ -7,7 +7,7 @@ import com.ianf.dailylisten.fragments.SignUpFragment;
 import java.util.HashMap;
 
 public class LoginFragmentCreator {
-    private final static int SING_IN_FRAGMENT = 0;
+    public final static int SING_IN_FRAGMENT = 0;
     private final static int SING_UP_FRAGMENT = 1;
     public final static int SIZE_FRAGMENT = 2;
 
