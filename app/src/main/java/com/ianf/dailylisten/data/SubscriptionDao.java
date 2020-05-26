@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.ianf.dailylisten.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
+import com.ximalaya.ting.android.opensdk.model.album.Announcer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,8 @@ import cn.bmob.v3.listener.UpdateListener;
 
 public class SubscriptionDao implements ISubDao {
     private static final String TAG = "SubscriptionDao";
-    private List<ISubDaoCallback> mISubDaoCallbacks = new ArrayList<>();
     private List<Album> mAlbumList = new ArrayList<>();
+    private ISubDaoCallback mISubDaoCallback = null;
 
     private SubscriptionDao() {
     }
@@ -33,9 +34,7 @@ public class SubscriptionDao implements ISubDao {
 
     @Override
     public void setCallback(ISubDaoCallback callback) {
-        if (callback != null && !mISubDaoCallbacks.contains(callback)) {
-            mISubDaoCallbacks.add(callback);
-        }
+        mISubDaoCallback = callback;
     }
 
     @Override
@@ -44,18 +43,15 @@ public class SubscriptionDao implements ISubDao {
         myAlbum.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {
-                LogUtil.d(TAG,Thread.currentThread().getName());
-                LogUtil.d(TAG,"s"+s);
+                LogUtil.d(TAG, Thread.currentThread().getName());
+                LogUtil.d(TAG, "s" + s);
                 if (e == null) {
-                    LogUtil.d(TAG,"no exception");
-                    for (ISubDaoCallback iSubDaoCallback : mISubDaoCallbacks) {
-                        iSubDaoCallback.onAddResult(true);
-                    }
+                    LogUtil.d(TAG, "no exception");
+                    mISubDaoCallback.onAddResult(true);
                 } else {
-                    LogUtil.d(TAG,"exception" + e.getMessage());
-                    for (ISubDaoCallback iSubDaoCallback : mISubDaoCallbacks) {
-                        iSubDaoCallback.onAddResult(false);
-                    }
+                    LogUtil.d(TAG, "exception" + e.getMessage());
+                    mISubDaoCallback.onAddResult(false);
+
                 }
             }
         });
@@ -83,15 +79,17 @@ public class SubscriptionDao implements ISubDao {
         album.setAlbumIntro(myAlbum.getDescription());
         album.setIncludeTrackCount(myAlbum.getTracksCount());
         album.setPlayCount(myAlbum.getPlayCount());
-        album.getAnnouncer().setNickname(myAlbum.getAuthorName());
         album.setId(myAlbum.getAlbumId());
+
+        Announcer announcer = new Announcer();
+        announcer.setNickname(myAlbum.getAuthorName());
+        album.setAnnouncer(announcer);
         return album;
     }
 
     @Override
     public void delAlbum(Album album) {
         MyAlbum myAlbum = albumExchangeMyAlbum(album);
-        final String[] aa = new String[1];
         BmobQuery<MyAlbum> query = new BmobQuery<>();
         query.addWhereEqualTo("user", BmobUser.getCurrentUser(BmobUser.class));
         query.addWhereEqualTo("albumId", album.getId());
@@ -104,13 +102,9 @@ public class SubscriptionDao implements ISubDao {
                         @Override
                         public void done(BmobException e) {
                             if (e == null) {
-                                for (ISubDaoCallback iSubDaoCallback : mISubDaoCallbacks) {
-                                    iSubDaoCallback.onDelResult(true);
-                                }
+                                mISubDaoCallback.onDelResult(true);
                             } else {
-                                for (ISubDaoCallback iSubDaoCallback : mISubDaoCallbacks) {
-                                    iSubDaoCallback.onDelResult(false);
-                                }
+                                mISubDaoCallback.onDelResult(false);
                             }
                         }
                     });
@@ -128,19 +122,21 @@ public class SubscriptionDao implements ISubDao {
         query.order("-updatedAt");
         query.findObjects(new FindListener<MyAlbum>() {
             @Override
-            public void done(List<MyAlbum> albums, BmobException e) {
-
+            public void done(List<MyAlbum> myAlbums, BmobException e) {
                 if (e == null) {
                     LogUtil.d(TAG, "查询成功");
-                    LogUtil.d(TAG, "myAlbums size -->" + albums.size());
-                    for (MyAlbum myAlbum : albums) {
+                    LogUtil.d(TAG, "myAlbums size -->" + myAlbums.size());
+                    mAlbumList.clear();
+                    for (MyAlbum myAlbum : myAlbums) {
                         Album album = myAlbumExchangeAlbum(myAlbum);
+                        LogUtil.d(TAG, "mISubDaoCallback -->" + mISubDaoCallback.getClass());
                         mAlbumList.add(album);
                     }
+
                     //通知presenter albums 加载完成
-                    for (ISubDaoCallback iSubDaoCallback : mISubDaoCallbacks) {
-                        iSubDaoCallback.onSubListLoaded(mAlbumList);
-                    }
+                    mISubDaoCallback.onSubListLoaded(mAlbumList);
+                    LogUtil.d(TAG, "mAlbumList size -->" + mAlbumList.size());
+
                 } else {
                     Log.e("BMOB", e.toString());
                 }
@@ -152,21 +148,17 @@ public class SubscriptionDao implements ISubDao {
 
     @Override
     public void isSub(Album album) {
-        //TODO:判断该用户是否已经订阅，返回结果给presenter
+        //判断该用户是否已经订阅，返回结果给presenter
         BmobQuery<MyAlbum> query = new BmobQuery<>();
         query.addWhereEqualTo("user", BmobUser.getCurrentUser(BmobUser.class));
         query.addWhereEqualTo("albumId", album.getId());
         query.findObjects(new FindListener<MyAlbum>() {
             @Override
             public void done(List<MyAlbum> list, BmobException e) {
-                if (list.size() > 0){
-                    for (ISubDaoCallback iSubDaoCallback : mISubDaoCallbacks) {
-                        iSubDaoCallback.isASub(true);
-                    }
-                }else {
-                    for (ISubDaoCallback iSubDaoCallback : mISubDaoCallbacks) {
-                        iSubDaoCallback.isASub(false);
-                    }
+                if (list.size() > 0) {
+                    mISubDaoCallback.isASub(true);
+                } else {
+                    mISubDaoCallback.isASub(false);
                 }
             }
         });

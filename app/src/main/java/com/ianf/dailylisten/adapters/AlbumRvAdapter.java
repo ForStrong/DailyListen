@@ -36,12 +36,9 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
         //给item设置数据
         holder.setData(mAlbums.get(position));
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnAlbumItemClickListener != null) {
-                    mOnAlbumItemClickListener.albumItemClickListener((int)v.getTag(),mAlbums.get(position));
-                }
+        holder.itemView.setOnClickListener(v -> {
+            if (mOnAlbumItemClickListener != null) {
+                mOnAlbumItemClickListener.albumItemClickListener((int)v.getTag(),mAlbums.get(position));
             }
         });
     }
@@ -67,7 +64,7 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
 
 
     public interface OnAlbumItemClickListener{
-        void albumItemClickListener(int tag, Album album);
+        void albumItemClickListener(int position, Album album);
     }
 
     public class InnerHolder extends RecyclerView.ViewHolder {

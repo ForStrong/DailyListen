@@ -4,17 +4,19 @@ import com.ianf.dailylisten.data.ISubDaoCallback;
 import com.ianf.dailylisten.data.SubscriptionDao;
 import com.ianf.dailylisten.interfaces.ISubPresenter;
 import com.ianf.dailylisten.interfaces.ISubViewCallback;
+import com.ianf.dailylisten.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SubPresenter implements ISubPresenter, ISubDaoCallback {
+    private static final String TAG = "SubPresenter";
     private SubscriptionDao mSubscriptionDao = SubscriptionDao.getInstance();
     private List<ISubViewCallback> mISubViewCallbacks = new ArrayList<>();
 
     private SubPresenter() {
-        mSubscriptionDao.setCallback(this);
+
     }
     public static SubPresenter getInstance(){
         return InnerHolder.INSTANCE;
@@ -47,6 +49,7 @@ public class SubPresenter implements ISubPresenter, ISubDaoCallback {
     public void registerViewCallback(ISubViewCallback iSubViewCallback) {
         if (iSubViewCallback!=null && !mISubViewCallbacks.contains(iSubViewCallback))
             mISubViewCallbacks.add(iSubViewCallback);
+        mSubscriptionDao.setCallback(this);
     }
 
     @Override
@@ -70,14 +73,16 @@ public class SubPresenter implements ISubPresenter, ISubDaoCallback {
     }
 
     @Override
-    public void onSubListLoaded(List<Album> result) {
+    public void onSubListLoaded(List<Album> albums) {
+        LogUtil.d(TAG,"albums size -> "+albums.size());
         for (ISubViewCallback iSubViewCallback : mISubViewCallbacks) {
-            iSubViewCallback.onSubscriptionsLoaded(result);
+            iSubViewCallback.onSubscriptionsLoaded(albums);
         }
     }
 
     @Override
     public void isASub(boolean isSub) {
+        LogUtil.d(TAG,"isSub -> " + isSub);
         for (ISubViewCallback iSubViewCallback : mISubViewCallbacks) {
             iSubViewCallback.isSub(isSub);
         }

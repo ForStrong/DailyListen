@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.ianf.dailylisten.MainActivity;
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.activities.LoginActivity;
+import com.ianf.dailylisten.base.BaseApplication;
 import com.ianf.dailylisten.base.BaseFragment;
 
 import java.util.Objects;
@@ -72,13 +73,13 @@ public class SignInFragment extends BaseFragment {
                         } else {
                             Log.d(TAG, "errorMsg: "+e.getMessage());
                             Log.d(TAG, "errorCode: "+e.getErrorCode());
-                            Toast.makeText(getContext(), "登录失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(BaseApplication.getContext(), "登录失败", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                 });
             }else {
-                Toast.makeText(getContext(), "用户名和密码不能为空", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BaseApplication.getContext(), "用户名和密码不能为空", Toast.LENGTH_SHORT).show();
             }
         });
     }

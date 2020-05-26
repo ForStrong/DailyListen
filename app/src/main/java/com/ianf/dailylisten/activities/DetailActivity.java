@@ -189,7 +189,7 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
     @Override
     public void getAlbumByRecommend(Album albumByRecommend) {
         mAlbum = albumByRecommend;
-        Picasso.with(this).load(albumByRecommend.getCoverUrlSmall()).transform(new RoundTransform()).into(mSmallCoverIv);
+        Picasso.with(this).load(albumByRecommend.getCoverUrlLarge()).transform(new RoundTransform()).into(mSmallCoverIv);
         mAlbumAuthorTv.setText((albumByRecommend.getAnnouncer().getNickname()));
         mAlbumTitleTv.setText(albumByRecommend.getAlbumTitle());
 
@@ -338,11 +338,12 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
 
     @Override
     public void onSubscriptionsLoaded(List<Album> albums) {
-
+        LogUtil.d(TAG,"albums size -> "+albums.size());
     }
 
     @Override
     public void isSub(boolean isSub) {
+        LogUtil.d(TAG,"isSub -> " + isSub);
         mIsCurrentAlbumSub = isSub;
         updateSubTv();
     }
