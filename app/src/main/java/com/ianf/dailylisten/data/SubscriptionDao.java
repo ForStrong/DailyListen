@@ -132,7 +132,6 @@ public class SubscriptionDao implements ISubDao {
                         LogUtil.d(TAG, "mISubDaoCallback -->" + mISubDaoCallback.getClass());
                         mAlbumList.add(album);
                     }
-
                     //通知presenter albums 加载完成
                     mISubDaoCallback.onSubListLoaded(mAlbumList);
                     LogUtil.d(TAG, "mAlbumList size -->" + mAlbumList.size());
