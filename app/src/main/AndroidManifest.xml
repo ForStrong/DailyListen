@@ -35,7 +35,8 @@
         <activity android:name=".activities.PlayerActivity" />
         <activity android:name=".activities.DetailActivity" />
         <activity android:name=".base.BaseActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme">
 
         </activity>
 

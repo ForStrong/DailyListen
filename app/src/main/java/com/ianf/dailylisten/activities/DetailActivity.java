@@ -49,7 +49,6 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback,
     private PlayerPresenter mPlayerPresenter;
     private List<Track> mTracks;
     private final int DEFAULT_POSITION = 0;
-    //    private Track mCurrentTrack;
     private String mCurrentTrackTitle;
     private RefreshLayout mRefreshLayout;
     private TextView mSubTv;

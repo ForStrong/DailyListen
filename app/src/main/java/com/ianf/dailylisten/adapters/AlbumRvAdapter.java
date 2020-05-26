@@ -22,6 +22,8 @@ import java.util.List;
 public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHolder> {
     private List<Album> mAlbums = new ArrayList<>();
     private OnAlbumItemClickListener mOnAlbumItemClickListener;
+    private OnAlbumItemLongClickListener mLongClickListener;
+
     @NonNull
     @Override
     public InnerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -38,17 +40,24 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
 
         holder.itemView.setOnClickListener(v -> {
             if (mOnAlbumItemClickListener != null) {
-                mOnAlbumItemClickListener.albumItemClickListener((int)v.getTag(),mAlbums.get(position));
+                mOnAlbumItemClickListener.albumItemClickListener((int) v.getTag(), mAlbums.get(position));
             }
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (mLongClickListener != null) {
+                mLongClickListener.onItemLongClick(mAlbums.get(position));
+            }
+            return true;
         });
     }
 
     @Override
     public int getItemCount() {
-        return mAlbums == null? 0:mAlbums.size();
+        return mAlbums == null ? 0 : mAlbums.size();
     }
 
-    public void setData(List<Album> albums){
+    public void setData(List<Album> albums) {
         //跟新mAlbums数据
         if (mAlbums != null) {
             mAlbums.clear();
@@ -57,15 +66,27 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
         //更新UI
         notifyDataSetChanged();
     }
+
     //设置ItemClickListener接口
-    public void setAlbumItemClickListener(OnAlbumItemClickListener listener){
+    public void setAlbumItemClickListener(OnAlbumItemClickListener listener) {
         mOnAlbumItemClickListener = listener;
     }
 
-
-    public interface OnAlbumItemClickListener{
+    public interface OnAlbumItemClickListener {
         void albumItemClickListener(int position, Album album);
     }
+
+    /**
+     * item长按的接口
+     */
+    public interface OnAlbumItemLongClickListener {
+        void onItemLongClick(Album album);
+    }
+
+    public void setOnAlbumItemLongClickListener(OnAlbumItemLongClickListener listener) {
+        this.mLongClickListener = listener;
+    }
+
 
     public class InnerHolder extends RecyclerView.ViewHolder {
 
@@ -74,6 +95,7 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
         private TextView mAlbumDesTv;
         private TextView mAlbumPlayCountTv;
         private TextView mAlbumContentCountTv;
+
         //初始化所有控件
         public InnerHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,18 +110,19 @@ public class AlbumRvAdapter extends RecyclerView.Adapter<AlbumRvAdapter.InnerHol
             //专辑内容数量
             mAlbumContentCountTv = itemView.findViewById(R.id.album_content_size);
         }
+
         //给各个控件设置数据
         @SuppressLint("SetTextI18n")
         public void setData(Album album) {
             mAlbumTitleTv.setText(album.getAlbumTitle());
             mAlbumDesTv.setText(album.getAlbumIntro());
-            mAlbumContentCountTv.setText(album.getIncludeTrackCount()+"");
-            mAlbumPlayCountTv.setText(album.getPlayCount()+"");
+            mAlbumContentCountTv.setText(album.getIncludeTrackCount() + "");
+            mAlbumPlayCountTv.setText(album.getPlayCount() + "");
             //把图片URL通过Picasso添加到imageView中
             String coverUrlLarge = album.getCoverUrlLarge();
-            if (!TextUtils.isEmpty(coverUrlLarge)){
+            if (!TextUtils.isEmpty(coverUrlLarge)) {
                 Picasso.with(itemView.getContext()).load(coverUrlLarge).transform(new RoundTransform()).into(mAlbumCoverIv);
-            }else {
+            } else {
                 mAlbumCoverIv.setImageResource(R.mipmap.ximalay_logo);
             }
         }
