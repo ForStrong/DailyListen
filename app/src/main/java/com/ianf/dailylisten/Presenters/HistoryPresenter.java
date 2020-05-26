@@ -78,6 +78,7 @@ public class HistoryPresenter implements IHistoryDaoViewCallback, IHistoryPresen
 
     @Override
     public void onHistoriesLoaded(List<Track> tracks) {
+        LogUtil.d(TAG,"tracks size -> " + tracks.size());
         for (IHistoryPresenterViewCallback presenterViewCallback : mPresenterViewCallbacks) {
             presenterViewCallback.onHistoriesLoaded(tracks);
         }
@@ -90,4 +91,5 @@ public class HistoryPresenter implements IHistoryDaoViewCallback, IHistoryPresen
         }
     }
 //=========================IHistoryDaoViewCallback end==============================================
+
 }

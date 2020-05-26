@@ -68,12 +68,14 @@ public class HistoryDao implements IHistoryDao {
 
     private Track myTrackExchangeTrack(MyTrack myTrack) {
         Track track = new Track();
-        track.setCoverUrlLarge(myTrack.getCoverUrlLarge());
         track.setDataId(myTrack.getDataId());
         track.setDuration(myTrack.getDuration());
         track.setPlayCount(myTrack.getPlayCount());
         track.setTrackTitle(myTrack.getTrackTitle());
         track.setUpdatedAt(myTrack.getUpdatedDate());
+        track.setCoverUrlLarge(myTrack.getCoverUrlLarge());
+        track.setCoverUrlMiddle(myTrack.getCoverUrlLarge());
+        track.setCoverUrlSmall(myTrack.getCoverUrlLarge());
 
         Announcer announcer = new Announcer();
         announcer.setNickname(myTrack.getNickname());
@@ -138,6 +140,7 @@ public class HistoryDao implements IHistoryDao {
             public void done(List<MyTrack> myTracks, BmobException e) {
                 List<Track> trackList = new ArrayList<>();
                 trackList.clear();
+                LogUtil.d(TAG,"myTracks size ->" + myTracks.size());
                 for (MyTrack myTrack : myTracks) {
                     Track track = myTrackExchangeTrack(myTrack);
                     trackList.add(track);

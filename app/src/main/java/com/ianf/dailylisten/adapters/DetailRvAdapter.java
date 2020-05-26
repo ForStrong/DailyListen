@@ -21,6 +21,8 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
     private static final String TAG = "DetailRvAdapter";
     private List<Track> mTracks = new ArrayList<>();
     private OnItemClickListener mItemClickListener;
+    private OnLongClickListener mItemLongClickListener;
+
     //创造页面
     @NonNull
     @Override
@@ -34,14 +36,17 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
         holder.itemView.setTag(position);
         holder.setViewData(position);
         //给item设置点击事件
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mItemClickListener != null) {
-                    mItemClickListener.onItemClick(mTracks,position);
-                }
-                Toast.makeText(v.getContext(), "position" + v.getTag(), Toast.LENGTH_SHORT).show();
+        holder.itemView.setOnClickListener(v -> {
+            if (mItemClickListener != null) {
+                mItemClickListener.onItemClick(mTracks,position);
             }
+//            Toast.makeText(v.getContext(), "position" + v.getTag(), Toast.LENGTH_SHORT).show();
+        });
+        holder.itemView.setOnLongClickListener(v -> {
+            if (mItemLongClickListener != null) {
+                mItemLongClickListener.onItemLongClick(mTracks,position);
+            }
+            return false;
         });
     }
 
@@ -104,5 +109,15 @@ public class DetailRvAdapter extends RecyclerView.Adapter<DetailRvAdapter.InnerH
     //创建Item点击的回调接口
     public interface OnItemClickListener{
         void onItemClick(List<Track> tracks, int position);
+    }
+
+    //设置回调接口
+    public void setOnLongClickListener(OnLongClickListener longClickListener){
+        mItemLongClickListener = longClickListener;
+    }
+
+    //创建Item点击的回调接口
+    public interface OnLongClickListener{
+        void onItemLongClick(List<Track> tracks, int position);
     }
 }
