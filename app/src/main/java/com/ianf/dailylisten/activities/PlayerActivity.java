@@ -81,6 +81,7 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     private PlayerListPopupWin mPopupWin;
     private ValueAnimator mOutValueAnimator;
     private ValueAnimator mEnterValueAnimator;
+    private ImageView mBackIv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,7 +202,7 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
             mPlayerPresenter.setPlayMode(Constants.CURRENT_MODE);
         });
 
-
+        mBackIv.setOnClickListener(v -> finish());
     }
     /*设置播放器模式，mode取值为PlayMode中的下列之一：
      * 1.PLAY_MODEL_LIST列表播放
@@ -245,6 +246,8 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
         mPlayerListIv = findViewById(R.id.player_list);
         //初始化popupWin
         mPopupWin = new PlayerListPopupWin();
+
+        mBackIv = findViewById(R.id.play_backIv);
     }
 
     @Override

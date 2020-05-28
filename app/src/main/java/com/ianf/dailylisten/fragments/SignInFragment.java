@@ -73,13 +73,16 @@ public class SignInFragment extends BaseFragment {
                         } else {
                             Log.d(TAG, "errorMsg: "+e.getMessage());
                             Log.d(TAG, "errorCode: "+e.getErrorCode());
-                            Toast.makeText(BaseApplication.getContext(), "登录失败", Toast.LENGTH_SHORT).show();
+                            if (e.getErrorCode() == 101)
+                                Toast.makeText(BaseApplication.getContext(), "用户名或者密码错误 ！", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(BaseApplication.getContext(), "网络错误，登录失败 ！", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                 });
             }else {
-                Toast.makeText(BaseApplication.getContext(), "用户名和密码不能为空", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BaseApplication.getContext(), "用户名和密码不能为空 ！", Toast.LENGTH_SHORT).show();
             }
         });
     }
