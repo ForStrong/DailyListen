@@ -332,14 +332,16 @@ public class PlayerActivity extends AppCompatActivity implements IPlayerViewCall
     //更新UI，ViewPager，TrackTitle ，TrackName ，PopupWin
     @Override
     public void onSoundSwitch(Track curTrack, int currentIndex) {
-        if (mTrackTitle != null){
-            mTrackTitle.setText(curTrack.getTrackTitle());
+        if (curTrack != null) {
+            if (mTrackTitle != null){
+                mTrackTitle.setText(curTrack.getTrackTitle());
+            }
+            if (mTrackNameTv != null){
+                mTrackNameTv.setText(curTrack.getAnnouncer().getNickname());
+            }
+            mPlayerViewPager.setCurrentItem(currentIndex);
+            mPopupWin.updateIndex(currentIndex);
         }
-        if (mTrackNameTv != null){
-            mTrackNameTv.setText(curTrack.getAnnouncer().getNickname());
-        }
-        mPlayerViewPager.setCurrentItem(currentIndex);
-        mPopupWin.updateIndex(currentIndex);
     }
 
     //11.获取当前trackList

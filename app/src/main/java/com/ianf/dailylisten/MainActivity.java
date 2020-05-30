@@ -73,6 +73,10 @@ public class MainActivity extends BaseActivity implements IPlayerViewCallback {
         });
 
         mPlayControlLayout.setOnClickListener(v -> {
+            if (!mPlayerPresenter.hasPlayList()){
+                //没有播放列表，播放默认专辑第一个音频
+                playFirstRecommendAudio();
+            }
             Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
             startActivity(intent);
         });
