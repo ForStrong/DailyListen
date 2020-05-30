@@ -81,6 +81,13 @@ public class SubPresenter implements ISubPresenter, ISubDaoCallback {
     }
 
     @Override
+    public void onSubListError() {
+        for (ISubViewCallback iSubViewCallback : mISubViewCallbacks) {
+            iSubViewCallback.onSubLoadedError();
+        }
+    }
+
+    @Override
     public void isASub(boolean isSub) {
         LogUtil.d(TAG,"isSub -> " + isSub);
         for (ISubViewCallback iSubViewCallback : mISubViewCallbacks) {

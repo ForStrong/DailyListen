@@ -13,6 +13,11 @@ public interface IHistoryPresenterViewCallback {
     void onHistoriesLoaded(List<Track> tracks);
 
     /**
+     *加载历史记录失败
+     */
+    void onHistoriesLoadedError();
+
+    /**
      * 调用添加历史的时候 ，去通知UI结果
      *
      * @param isSuccess

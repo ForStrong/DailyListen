@@ -360,11 +360,21 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback
         mIsCurrentAlbumSub = isSub;
         updateSubTv();
     }
+
+    @Override
+    public void onSubLoadedError() {
+
+    }
 //==================================subPresenterViewCallback end====================================
 
 //==================================historyPresenterViewCallback start==============================
     @Override
     public void onHistoriesLoaded(List<Track> tracks) {
+
+    }
+
+    @Override
+    public void onHistoriesLoadedError() {
 
     }
 

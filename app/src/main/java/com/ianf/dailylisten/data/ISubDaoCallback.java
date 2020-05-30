@@ -26,5 +26,12 @@ public interface ISubDaoCallback {
      */
     void onSubListLoaded(List<Album> result);
 
+
+    /**
+     * 历史数据加载失败
+     *
+     */
+    void onSubListError();
+
     void isASub(boolean isSuccess);
 }

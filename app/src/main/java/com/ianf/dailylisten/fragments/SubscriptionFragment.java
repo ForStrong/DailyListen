@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -50,6 +51,11 @@ public class SubscriptionFragment extends BaseFragment implements ISubViewCallba
         mSubPresenter.getSubscriptionList();
         if (mUiLoader != null) {
             mUiLoader.upDataUIStatus(UILoader.UIStatus.LOADING);
+            mUiLoader.setOnRetryListener(() -> {
+                //网络错误，重新加载
+                mSubPresenter.getSubscriptionList();
+                mUiLoader.upDataUIStatus(UILoader.UIStatus.LOADING);
+            });
         }
     }
 
@@ -105,12 +111,16 @@ public class SubscriptionFragment extends BaseFragment implements ISubViewCallba
     //====================ISubViewCallback  start=======================================================
     @Override
     public void onAddResult(boolean isSuccess) {
-        mSubPresenter.getSubscriptionList();
+        if (isSuccess)
+            mSubPresenter.getSubscriptionList();
     }
 
     @Override
     public void onDeleteResult(boolean isSuccess) {
-        mSubPresenter.getSubscriptionList();
+        if (isSuccess)
+            mSubPresenter.getSubscriptionList();
+        else
+            Toast.makeText(getActivity(), "删除订阅失败", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -128,6 +138,12 @@ public class SubscriptionFragment extends BaseFragment implements ISubViewCallba
     @Override
     public void isSub(boolean isSub) {
 
+    }
+
+    @Override
+    public void onSubLoadedError() {
+        if (mUiLoader != null)
+            mUiLoader.upDataUIStatus(UILoader.UIStatus.NETWORK_ERROR);
     }
 //====================ISubViewCallback  end=======================================================
 }

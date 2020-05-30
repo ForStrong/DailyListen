@@ -32,4 +32,9 @@ public interface ISubViewCallback {
     *usage:
     */
     void isSub(boolean isSub);
+
+    /**
+     *加载订阅专辑失败
+     */
+    void onSubLoadedError();
 }

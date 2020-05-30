@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.ianf.dailylisten.Presenters.HistoryPresenter;
 import com.ianf.dailylisten.Presenters.PlayerPresenter;
@@ -44,12 +45,12 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
 
     @Override
     protected View onSubViewLoad(LayoutInflater inflater, ViewGroup container) {
-        View rootView = inflater.inflate(R.layout.fragment_history,container,false);
+        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
         FrameLayout historyContainer = rootView.findViewById(R.id.history_container);
         mUiLoader = new UILoader(container.getContext()) {
             @Override
             public View getSuccessView(ViewGroup container) {
-                return initSuccessView(inflater,container);
+                return initSuccessView(inflater, container);
             }
         };
         if (mUiLoader.getParent() instanceof ViewGroup) {
@@ -66,6 +67,10 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
         mHistoryPresenter.listHistories();
         if (mUiLoader != null) {
             mUiLoader.upDataUIStatus(UILoader.UIStatus.LOADING);
+            mUiLoader.setOnRetryListener(() -> {
+                mUiLoader.upDataUIStatus(UILoader.UIStatus.LOADING);
+                mHistoryPresenter.listHistories();
+            });
         }
     }
 
@@ -83,7 +88,7 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
         mDetailRvAdapter = new DetailRvAdapter();
         historyRv.setAdapter(mDetailRvAdapter);
         mDetailRvAdapter.setItemClickListener((tracks, position) -> {
-            PlayerPresenter.getInstance().setTrackList(tracks,position);
+            PlayerPresenter.getInstance().setTrackList(tracks, position);
             Intent intent = new Intent(getActivity(), PlayerActivity.class);
             startActivity(intent);
         });
@@ -96,37 +101,52 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
         });
         return view;
     }
-//=============IHistoryPresenterViewCallback start==================================================
+
+    //=============IHistoryPresenterViewCallback start==================================================
     @Override
     public void onHistoriesLoaded(List<Track> tracks) {
-        if (tracks.size() >0) {
+        if (tracks.size() > 0) {
             mUiLoader.upDataUIStatus(UILoader.UIStatus.SUCCESS);
-        }else {
+        } else {
             mUiLoader.upDataUIStatus(UILoader.UIStatus.EMPTY);
         }
-        LogUtil.d(TAG,"tracks size ->"+tracks.size());
+        LogUtil.d(TAG, "tracks size ->" + tracks.size());
         mDetailRvAdapter.setData(tracks);
         mDetailRvAdapter.notifyDataSetChanged();
     }
 
     @Override
+    public void onHistoriesLoadedError() {
+        if (mUiLoader != null) {
+            mUiLoader.upDataUIStatus(UILoader.UIStatus.NETWORK_ERROR);
+        }
+    }
+
+    @Override
     public void onHistoryAddResult(boolean isSuccess) {
-        mHistoryPresenter.listHistories();
+        if (isSuccess)
+            mHistoryPresenter.listHistories();
     }
 
     @Override
     public void onHistoryDeleteResult(boolean isSuccess) {
-        mHistoryPresenter.listHistories();
+        if (isSuccess)
+            mHistoryPresenter.listHistories();
+        else
+            Toast.makeText(getActivity(), "清除历史记录失败!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onCleanedHistory(boolean isSuccess) {
-        mHistoryPresenter.listHistories();
+        if (isSuccess)
+            mHistoryPresenter.listHistories();
+        else
+            Toast.makeText(getActivity(), "清除历史记录失败!", Toast.LENGTH_SHORT).show();
     }
 
 //=============IHistoryPresenterViewCallback end====================================================
 
-//=============OnDialogActionClickListener start====================================================
+    //=============OnDialogActionClickListener start====================================================
     @Override
     public void onCancelClick() {
         if (mDialog != null) {
@@ -136,9 +156,9 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
 
     @Override
     public void onConfirmClick(boolean isCheck) {
-        if (isCheck){
+        if (isCheck) {
             mHistoryPresenter.cleanHistories();
-        }else {
+        } else {
             mHistoryPresenter.delHistory(mCurrentTrack);
         }
 

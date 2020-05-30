@@ -85,6 +85,13 @@ public class HistoryPresenter implements IHistoryDaoViewCallback, IHistoryPresen
     }
 
     @Override
+    public void onHistoriesError() {
+        for (IHistoryPresenterViewCallback presenterViewCallback : mPresenterViewCallbacks) {
+            presenterViewCallback.onHistoriesLoadedError();
+        }
+    }
+
+    @Override
     public void onHistoriesClean(boolean isSuccess) {
         for (IHistoryPresenterViewCallback presenterViewCallback : mPresenterViewCallbacks) {
             presenterViewCallback.onCleanedHistory(isSuccess);

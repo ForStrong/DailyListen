@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:hint="输入密码"
             android:inputType="textPassword"
-            android:text="bbb" />
+            android:text="ccc" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.constraintlayout.widget.Guideline

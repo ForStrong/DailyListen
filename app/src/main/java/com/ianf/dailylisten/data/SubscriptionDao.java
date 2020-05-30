@@ -97,17 +97,21 @@ public class SubscriptionDao implements ISubDao {
         query.findObjects(new FindListener<MyAlbum>() {
             @Override
             public void done(List<MyAlbum> list, BmobException e) {
-                if (list.size() > 0) {
-                    myAlbum.delete(list.get(0).getObjectId(), new UpdateListener() {
-                        @Override
-                        public void done(BmobException e) {
-                            if (e == null) {
-                                mISubDaoCallback.onDelResult(true);
-                            } else {
-                                mISubDaoCallback.onDelResult(false);
+                if (e == null) {
+                    if (list.size() > 0) {
+                        myAlbum.delete(list.get(0).getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if (e == null) {
+                                    mISubDaoCallback.onDelResult(true);
+                                } else {
+                                    mISubDaoCallback.onDelResult(false);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                }else {
+                    mISubDaoCallback.onDelResult(false);
                 }
             }
         });
@@ -135,8 +139,9 @@ public class SubscriptionDao implements ISubDao {
                     //通知presenter albums 加载完成
                     mISubDaoCallback.onSubListLoaded(mAlbumList);
                     LogUtil.d(TAG, "mAlbumList size -->" + mAlbumList.size());
-
                 } else {
+                    //加载数据失败
+                    mISubDaoCallback.onSubListError();
                     Log.e("BMOB", e.toString());
                 }
             }
@@ -154,10 +159,12 @@ public class SubscriptionDao implements ISubDao {
         query.findObjects(new FindListener<MyAlbum>() {
             @Override
             public void done(List<MyAlbum> list, BmobException e) {
-                if (list.size() > 0) {
-                    mISubDaoCallback.isASub(true);
-                } else {
-                    mISubDaoCallback.isASub(false);
+                if (e == null) {
+                    if (list.size() > 0) {
+                        mISubDaoCallback.isASub(true);
+                    } else {
+                        mISubDaoCallback.isASub(false);
+                    }
                 }
             }
         });

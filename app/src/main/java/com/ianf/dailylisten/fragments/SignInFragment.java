@@ -61,26 +61,28 @@ public class SignInFragment extends BaseFragment {
             user.setPassword(password);
             boolean isEmpty = isEmpty(userName, password);
             if (!isEmpty){
-                user.login(new SaveListener<BmobUser>() {
-                    @Override
-                    public void done(BmobUser bmobUser, BmobException e) {
-                        if (e == null) {
-                            Toast.makeText(getContext(), "登录成功", Toast.LENGTH_SHORT).show();
-                            LoginActivity loginActivity = (LoginActivity)getActivity();
-                            startActivity(new Intent(loginActivity,MainActivity.class));
-                            assert loginActivity != null;
-                            loginActivity.finish();
-                        } else {
-                            Log.d(TAG, "errorMsg: "+e.getMessage());
-                            Log.d(TAG, "errorCode: "+e.getErrorCode());
-                            if (e.getErrorCode() == 101)
-                                Toast.makeText(BaseApplication.getContext(), "用户名或者密码错误 ！", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(BaseApplication.getContext(), "网络错误，登录失败 ！", Toast.LENGTH_SHORT).show();
+                synchronized (this) {
+                    user.login(new SaveListener<BmobUser>() {
+                        @Override
+                        public void done(BmobUser bmobUser, BmobException e) {
+                            if (e == null) {
+                                Toast.makeText(getContext(), "登录成功", Toast.LENGTH_SHORT).show();
+                                LoginActivity loginActivity = (LoginActivity)getActivity();
+                                startActivity(new Intent(loginActivity,MainActivity.class));
+                                assert loginActivity != null;
+                                loginActivity.finish();
+                            } else {
+                                Log.d(TAG, "errorMsg: "+e.getMessage());
+                                Log.d(TAG, "errorCode: "+e.getErrorCode());
+                                if (e.getErrorCode() == 101)
+                                    Toast.makeText(BaseApplication.getContext(), "用户名或者密码错误 ！", Toast.LENGTH_SHORT).show();
+                                else
+                                    Toast.makeText(BaseApplication.getContext(), "网络错误，登录失败 ！", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
 
-                });
+                    });
+                }
             }else {
                 Toast.makeText(BaseApplication.getContext(), "用户名和密码不能为空 ！", Toast.LENGTH_SHORT).show();
             }

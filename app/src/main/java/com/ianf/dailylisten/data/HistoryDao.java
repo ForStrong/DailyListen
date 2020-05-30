@@ -93,17 +93,21 @@ public class HistoryDao implements IHistoryDao {
         query.findObjects(new FindListener<MyTrack>() {
             @Override
             public void done(List<MyTrack> list, BmobException e) {
-                if (list.size() > 0) {
-                    myTrack.delete(list.get(0).getObjectId(), new UpdateListener() {
-                        @Override
-                        public void done(BmobException e) {
-                            if (e == null) {
-                                mViewCallback.onHistoryDel(true);
-                            } else {
-                                mViewCallback.onHistoryDel(false);
+                if (e == null) {
+                    if (list.size() > 0) {
+                        myTrack.delete(list.get(0).getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if (e == null) {
+                                    mViewCallback.onHistoryDel(true);
+                                } else {
+                                    mViewCallback.onHistoryDel(false);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                }else {
+                    mViewCallback.onHistoryDel(false);
                 }
             }
         });
@@ -117,15 +121,18 @@ public class HistoryDao implements IHistoryDao {
         query.findObjects(new FindListener<MyTrack>() {
             @Override
             public void done(List<MyTrack> myTracks, BmobException e) {
-                for (MyTrack myTrack : myTracks) {
-                    myTrack.delete(myTrack.getObjectId(), new UpdateListener() {
-                        @Override
-                        public void done(BmobException e) {
-
-                        }
-                    });
+                if (e == null) {
+                    for (MyTrack myTrack : myTracks) {
+                        myTrack.delete(myTrack.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                            }
+                        });
+                    }
+                    mViewCallback.onHistoriesClean(true);
+                }else {
+                    mViewCallback.onHistoriesClean(false);
                 }
-                mViewCallback.onHistoriesClean(true);
             }
         });
     }
@@ -138,14 +145,19 @@ public class HistoryDao implements IHistoryDao {
         query.findObjects(new FindListener<MyTrack>() {
             @Override
             public void done(List<MyTrack> myTracks, BmobException e) {
-                List<Track> trackList = new ArrayList<>();
-                trackList.clear();
-                LogUtil.d(TAG,"myTracks size ->" + myTracks.size());
-                for (MyTrack myTrack : myTracks) {
-                    Track track = myTrackExchangeTrack(myTrack);
-                    trackList.add(track);
+                if (e == null) {
+                    List<Track> trackList = new ArrayList<>();
+                    trackList.clear();
+                    LogUtil.d(TAG,"myTracks size ->" + myTracks.size());
+                    for (MyTrack myTrack : myTracks) {
+                        Track track = myTrackExchangeTrack(myTrack);
+                        trackList.add(track);
+                    }
+                    mViewCallback.onHistoriesLoaded(trackList);
+                }else {
+                    //网络错误，加载数据失败
+                    mViewCallback.onHistoriesError();
                 }
-                mViewCallback.onHistoriesLoaded(trackList);
             }
         });
     }

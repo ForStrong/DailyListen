@@ -28,6 +28,12 @@ public interface IHistoryDaoViewCallback {
      */
     void onHistoriesLoaded(List<Track> tracks);
 
+    /**
+     * 历史数据加载失败
+     *
+     */
+    void onHistoriesError();
+
 
     /**
      * 历史内容清楚结果

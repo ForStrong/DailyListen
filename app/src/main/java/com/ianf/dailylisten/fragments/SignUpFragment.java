@@ -63,25 +63,27 @@ public class SignUpFragment extends BaseFragment {
             BmobUser user = new BmobUser();
             user.setUsername(userName);
             user.setPassword(password);
-            user.signUp(new SaveListener<BmobUser>() {
-                @Override
-                public void done(BmobUser bmobUser, BmobException e) {
-                    if (e == null){
-                        LoginActivity activity = (LoginActivity)getActivity();
-                        assert activity != null;
-                        activity.switchFragment(LoginFragmentCreator.SING_IN_FRAGMENT);
-                        Toast.makeText(getContext(), "注册成功,请到登陆页面登录", Toast.LENGTH_SHORT).show();
-                    }else {
-                        int errorCode = e.getErrorCode();
-                        if (errorCode == 202){
-                            Toast.makeText(getContext(), "该用户名已被注册", Toast.LENGTH_SHORT).show();
-                            mNameTv.setText("");
+            synchronized (this) {
+                user.signUp(new SaveListener<BmobUser>() {
+                    @Override
+                    public void done(BmobUser bmobUser, BmobException e) {
+                        if (e == null){
+                            LoginActivity activity = (LoginActivity)getActivity();
+                            assert activity != null;
+                            activity.switchFragment(LoginFragmentCreator.SING_IN_FRAGMENT);
+                            Toast.makeText(getContext(), "注册成功,请到登陆页面登录", Toast.LENGTH_SHORT).show();
+                        }else {
+                            int errorCode = e.getErrorCode();
+                            if (errorCode == 202){
+                                Toast.makeText(getContext(), "该用户名已被注册", Toast.LENGTH_SHORT).show();
+                                mNameTv.setText("");
+                            }
+                            Log.d(TAG, "error: "+e.getMessage());
+                            Log.d(TAG, "errorCode: "+errorCode);
                         }
-                        Log.d(TAG, "error: "+e.getMessage());
-                        Log.d(TAG, "errorCode: "+errorCode);
                     }
-                }
-            });
+                });
+            }
         }else{
             Toast.makeText(getContext(), "上面三项不能为空", Toast.LENGTH_SHORT).show();
         }
