@@ -3,6 +3,7 @@ package com.ianf.dailylisten.utils;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
+import com.ximalaya.ting.android.opensdk.model.album.AlbumList;
 import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 import com.ximalaya.ting.android.opensdk.model.album.SearchAlbumList;
 import com.ximalaya.ting.android.opensdk.model.track.TrackList;
@@ -41,6 +42,21 @@ public class XimalayApi {
         map.put(DTransferConstants.LIKE_COUNT, Constants.COUNT_RECOMMEND + "");
         CommonRequest.getGuessLikeAlbum(map, callback);
     }
+
+    /**
+     * 获取热门分类最火/最新/最多播放的专辑列表
+     * @param callback 请求结果的回调接口
+     * @param pageIndex 第几页
+     */
+    public void getHotAlbumList(IDataCallBack<AlbumList> callback,int pageIndex) {
+        Map<String ,String> map = new HashMap<>();
+        map.put(DTransferConstants.CATEGORY_ID ,"0");
+        map.put(DTransferConstants.CALC_DIMENSION ,"1");
+        map.put(DTransferConstants.PAGE ,pageIndex+"");
+        map.put(DTransferConstants.PAGE_SIZE ,Constants.COUNT_DEFAULT+"");
+        CommonRequest.getAlbumList(map,callback);
+    }
+
 
     /**
      * 根据专辑的id获取到专辑内容.

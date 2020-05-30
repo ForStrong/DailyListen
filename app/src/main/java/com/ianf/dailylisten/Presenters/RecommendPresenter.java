@@ -4,10 +4,12 @@ import com.ianf.dailylisten.interfaces.IRecommendPresenter;
 import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
 import com.ianf.dailylisten.utils.Constants;
 import com.ianf.dailylisten.utils.LogUtil;
+import com.ianf.dailylisten.utils.XimalayApi;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
+import com.ximalaya.ting.android.opensdk.model.album.AlbumList;
 import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 
 import java.util.ArrayList;
@@ -20,7 +22,8 @@ public class RecommendPresenter implements IRecommendPresenter{
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
     private String TAG = "RecommendPresenter";
     private List<Album> mCurrentAlbums = null;
-
+    private final XimalayApi mXimalayApi;
+    private int currentPage = 1;
     //懒汉式单例设计模式
     public static RecommendPresenter getInstance(){
         if (RECOMMEND_PRESENTER == null) {
@@ -35,13 +38,14 @@ public class RecommendPresenter implements IRecommendPresenter{
 
     //私有化构造方法
     private RecommendPresenter() {
+        mXimalayApi = XimalayApi.getXimalayApi();
     }
 
     /**
      *description: 根据api 3.10.6 获取猜你喜欢数据
      *usage:
      */
-    @Override
+/*    @Override
     public void loadData() {
         //UI为加载状态
         for (IRecommendViewCallback callback: mCallbacks) {
@@ -63,14 +67,55 @@ public class RecommendPresenter implements IRecommendPresenter{
                 handleError();
             }
         });
+
+    }*/
+
+    private void getData(boolean isLoadMore) {
+        if (!isLoadMore) {
+            currentPage = 1;
+            for (IRecommendViewCallback callback : mCallbacks) {
+                callback.onLoading();
+            }
+        }else {
+            currentPage++;
+
+        }
+        mXimalayApi.getHotAlbumList(new IDataCallBack<AlbumList>() {
+            @Override
+            public void onSuccess(AlbumList albumList) {
+                handleSuccess(albumList,isLoadMore);
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                handleError();
+            }
+        },currentPage);
     }
+
+    private void handleSuccess(AlbumList albumList,boolean isLoadMore) {
+        List<Album> albums = albumList.getAlbums();
+        if (albums != null) {
+            if (albums.size() != 0){
+                for (IRecommendViewCallback callback: mCallbacks) {
+                    callback.onRecommendListLoaded(albums,isLoadMore);
+                }
+                mCurrentAlbums = albums;
+            }else {
+                for (IRecommendViewCallback callback: mCallbacks) {
+                    callback.onEmpty();
+                }
+            }
+        }
+    }
+
     //更新UI为网络错误页面
     private void handleError() {
         for (IRecommendViewCallback callback: mCallbacks) {
             callback.onNetworkError();
         }
     }
-    //处理返回数据成功的结果empty or success
+/*    //处理返回数据成功的结果empty or success
     private void handleSuccess(GussLikeAlbumList gussLikeAlbumList) {
         if (gussLikeAlbumList != null) {
             List<Album> albumList = gussLikeAlbumList.getAlbumList();
@@ -91,18 +136,12 @@ public class RecommendPresenter implements IRecommendPresenter{
                 }
             }
         }
-    }
-
+    }*/
 
 
     @Override
-    public void loadMore() {
-
-    }
-
-    @Override
-    public void pullRefresh() {
-
+    public void loadData(Boolean isLoadMore) {
+        getData(isLoadMore);
     }
 
     @Override

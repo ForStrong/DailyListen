@@ -16,11 +16,11 @@ import com.ianf.dailylisten.activities.DetailActivity;
 import com.ianf.dailylisten.adapters.AlbumRvAdapter;
 import com.ianf.dailylisten.base.BaseFragment;
 import com.ianf.dailylisten.interfaces.IRecommendViewCallback;
-import com.ianf.dailylisten.utils.LogUtil;
 import com.ianf.dailylisten.views.UILoader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +37,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     private AlbumRvAdapter mAlbumRvAdapter;
     private RecommendPresenter mPresenter;
     private UILoader mUiLoader;
+    private RefreshLayout mRefreshLayout;
+    private List<Album> mAlbumList = new ArrayList<>();
 
 
     @Override
@@ -54,7 +56,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //注册网络错误时重新获取数据接口
         mUiLoader.setOnRetryListener(this);
         //加载数据
-        mPresenter.loadData();
+        mPresenter.loadData(false);
         //android不允许多次绑定
         if (mUiLoader.getParent() instanceof ViewGroup) {
             ((ViewGroup) mUiLoader.getParent()).removeView(mUiLoader);
@@ -66,9 +68,18 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         mRootView = inflater.inflate(R.layout.fragment_recommend,container,false);
         //初始化rv
         mAlbum_rv = mRootView.findViewById(R.id.album_rv);
-        RefreshLayout refreshLayout = mRootView.findViewById(R.id.recommendRefreshLayout);
-        refreshLayout.setEnablePureScrollMode(true);
-        refreshLayout.setReboundDuration(2000);
+        mRefreshLayout = mRootView.findViewById(R.id.recommendRefreshLayout);
+/*        refreshLayout.setEnablePureScrollMode(true);
+        refreshLayout.setReboundDuration(2000);*/
+        //禁止下拉刷新
+        mRefreshLayout.setEnableRefresh(false);
+        //recyclerview回弹的效果
+        mRefreshLayout.setEnableOverScrollBounce(true);
+        mRefreshLayout.setEnableOverScrollDrag(true);
+        mRefreshLayout.setOnLoadMoreListener(refreshLayout -> {
+           mPresenter.loadData(true);
+           mRefreshLayout.finishLoadMore(2000);
+        });
         //设置recyclerView的布局
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mRootView.getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -84,15 +95,22 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
 
     @Override
     public void retryLoadData() {
-        mPresenter.loadData();
+        mPresenter.loadData(false);
     }
 
 
 
     @Override
-    public void onRecommendListLoaded(List<Album> albumList) {
+    public void onRecommendListLoaded(List<Album> albumList,boolean isLoadMore) {
         mUiLoader.upDataUIStatus(UILoader.UIStatus.SUCCESS);
-        mAlbumRvAdapter.setData(albumList);
+        if (isLoadMore){
+            mAlbumList.addAll(albumList);
+        }else {
+            mAlbumList.clear();
+            mAlbumList.addAll(albumList);
+        }
+        mAlbumRvAdapter.setData(mAlbumList);
+        mRefreshLayout.finishLoadMore();
     }
 
     @Override
