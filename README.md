@@ -41,10 +41,6 @@
 
 订阅模块UI：
 
-	<div align = center>
-	    
-	</div>
-
 ![image-20200601145721390](https://i.loli.net/2020/06/01/WT1zqikNgar9Khe.png )
 
 历史模块UI：
