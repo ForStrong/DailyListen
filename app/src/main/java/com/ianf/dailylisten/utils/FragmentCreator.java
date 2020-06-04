@@ -16,7 +16,7 @@ import java.util.Map;
  *@usage: 通过getFragment(int index)返回fragment,用于viewPager切换fragment
 */
 public  class FragmentCreator {
-
+    private static final String TAG = "FragmentCreator";
     public final static int INDEX_RECOMMEND = 0;
     public final static int INDEX_SUBSCRIPTION = 1;
     public final static int INDEX_HISTORY = 2;
@@ -47,6 +47,7 @@ public  class FragmentCreator {
                 baseFragment = new HistoryFragment();
                 break;
         }
+        LogUtil.d(TAG,baseFragment.toString() + "");
         mFragmentMap.put(index,baseFragment);
         return baseFragment;
 

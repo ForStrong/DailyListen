@@ -118,7 +118,6 @@ public class SubscriptionDao implements ISubDao {
 
     }
 
-
     @Override
     public void getAlbums() {
         BmobQuery<MyAlbum> query = new BmobQuery<>();

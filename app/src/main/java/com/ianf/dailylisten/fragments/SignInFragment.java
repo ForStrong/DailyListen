@@ -80,7 +80,6 @@ public class SignInFragment extends BaseFragment {
                                     Toast.makeText(BaseApplication.getContext(), "网络错误，登录失败 ！", Toast.LENGTH_SHORT).show();
                             }
                         }
-
                     });
                 }
             }else {

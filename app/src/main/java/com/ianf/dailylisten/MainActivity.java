@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.Presenters.RecommendPresenter;
+import com.ianf.dailylisten.activities.LoginActivity;
 import com.ianf.dailylisten.activities.PlayerActivity;
 import com.ianf.dailylisten.activities.SearchActivity;
 import com.ianf.dailylisten.adapters.IndicatorAdapter;
@@ -118,6 +119,12 @@ public class MainActivity extends BaseActivity implements IPlayerViewCallback {
         searchLayout.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SearchActivity.class);
             startActivity(intent);
+        });
+
+        ConstraintLayout exitItem = findViewById(R.id.main_exit);
+        exitItem.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
         });
 
         //底部播放器控件初始化

@@ -52,7 +52,7 @@ public class XimalayApi {
         Map<String ,String> map = new HashMap<>();
         map.put(DTransferConstants.CATEGORY_ID ,"0");
         map.put(DTransferConstants.CALC_DIMENSION ,"1");
-        map.put(DTransferConstants.PAGE ,pageIndex+"");
+        map.put(DTransferConstants.PAGE ,pageIndex + "");
         map.put(DTransferConstants.PAGE_SIZE ,Constants.COUNT_DEFAULT+"");
         CommonRequest.getAlbumList(map,callback);
     }
