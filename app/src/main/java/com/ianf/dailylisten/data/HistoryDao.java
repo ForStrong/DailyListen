@@ -126,6 +126,7 @@ public class HistoryDao implements IHistoryDao {
                         myTrack.delete(myTrack.getObjectId(), new UpdateListener() {
                             @Override
                             public void done(BmobException e) {
+
                             }
                         });
                     }

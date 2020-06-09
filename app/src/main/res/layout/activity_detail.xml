@@ -91,10 +91,13 @@
 
     <TextView
         android:id="@+id/tv_album_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="6dp"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
         android:text="这是标题"
         android:textColor="@color/cardview_light_background"
         android:textSize="18sp"

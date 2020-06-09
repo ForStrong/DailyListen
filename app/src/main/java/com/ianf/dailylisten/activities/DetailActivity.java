@@ -38,7 +38,7 @@ import java.util.List;
 
 public class DetailActivity extends BaseActivity implements IDetailViewCallback
         , UILoader.OnRetryClickListener, DetailRvAdapter.OnItemClickListener
-        , IPlayerViewCallback, ISubViewCallback,IHistoryPresenterViewCallback {
+        , IPlayerViewCallback, ISubViewCallback {
     private static final String TAG = "DetailActivity";
     private ImageView mSmallCoverIv;
     private TextView mAlbumTitleTv;
@@ -58,7 +58,7 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback
     private TextView mSubTv;
     private SubPresenter mSubPresenter;
     private boolean mIsCurrentAlbumSub;
-    private HistoryPresenter mHistoryPresenter;
+//    private HistoryPresenter mHistoryPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +134,7 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback
     private void initBaseView() {
         mSmallCoverIv = findViewById(R.id.iv_small_cover);
         mAlbumTitleTv = findViewById(R.id.tv_album_title);
+        mAlbumTitleTv.setSelected(true);
         mAlbumAuthorTv = findViewById(R.id.tv_album_author);
         mPlayControlIv = findViewById(R.id.detail_play_control);
         mPlayControlTv = findViewById(R.id.play_control_tv);
@@ -188,9 +189,9 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback
         mSubPresenter = SubPresenter.getInstance();
         mSubPresenter.registerViewCallback(this);
 
-        //初始化历史presenter
+/*        //初始化历史presenter
         mHistoryPresenter = HistoryPresenter.getInstance();
-        mHistoryPresenter.registerViewCallback(this);
+        mHistoryPresenter.registerViewCallback(this);*/
     }
 
     //获取到从recommendFragment来的album，给控件添加内容
@@ -242,7 +243,7 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback
         mDetailPresenter.unRegisterViewCallback(this);
         mPlayerPresenter.unRegisterViewCallback(this);
         mSubPresenter.unRegisterViewCallback(this);
-        mHistoryPresenter.unRegisterViewCallback(this);
+//        mHistoryPresenter.unRegisterViewCallback(this);
     }
 
     @Override
@@ -258,9 +259,9 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback
         //调转到播放页面
         Intent intent = new Intent(this, PlayerActivity.class);
         startActivity(intent);
-
+/*
         //添加历史
-        mHistoryPresenter.addHistory(tracks.get(position));
+        mHistoryPresenter.addHistory(tracks.get(position));*/
     }
 
     //根据mIsCurrentAlbumSub改变mSubTv的UI
@@ -366,32 +367,5 @@ public class DetailActivity extends BaseActivity implements IDetailViewCallback
 
     }
 //==================================subPresenterViewCallback end====================================
-
-//==================================historyPresenterViewCallback start==============================
-    @Override
-    public void onHistoriesLoaded(List<Track> tracks) {
-
-    }
-
-    @Override
-    public void onHistoriesLoadedError() {
-
-    }
-
-    @Override
-    public void onHistoryAddResult(boolean isSuccess) {
-        LogUtil.d(TAG,"add history isSuccess ->"+isSuccess);
-    }
-
-    @Override
-    public void onHistoryDeleteResult(boolean isSuccess) {
-
-    }
-
-    @Override
-    public void onCleanedHistory(boolean isSuccess) {
-
-    }
-//==================================historyPresenterViewCallback end================================
 }
 

@@ -2,24 +2,21 @@ package com.ianf.dailylisten.fragments;
 
 
 import android.content.Intent;
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ianf.dailylisten.Presenters.HistoryPresenter;
 import com.ianf.dailylisten.Presenters.PlayerPresenter;
 import com.ianf.dailylisten.R;
 import com.ianf.dailylisten.activities.PlayerActivity;
 import com.ianf.dailylisten.adapters.DetailRvAdapter;
-import com.ianf.dailylisten.base.BaseApplication;
 import com.ianf.dailylisten.base.BaseFragment;
 import com.ianf.dailylisten.interfaces.IHistoryPresenterViewCallback;
 import com.ianf.dailylisten.utils.LogUtil;
@@ -28,8 +25,6 @@ import com.ianf.dailylisten.views.UILoader;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.List;
-
-import cn.bmob.v3.http.I;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -95,7 +90,7 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
         mDetailRvAdapter.setOnLongClickListener((tracks, position) -> {
             mCurrentTrack = tracks.get(position);
             //弹窗删除按钮
-            mDialog = new HistoryTrackDialog(getContext());
+            mDialog = new HistoryTrackDialog(view.getContext());
             mDialog.setOnDialogActionClickListener(this);
             mDialog.show();
         });
@@ -134,6 +129,9 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
             mHistoryPresenter.listHistories();
         else
             Toast.makeText(getActivity(), "清除历史记录失败!", Toast.LENGTH_SHORT).show();
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
     }
 
     @Override
@@ -142,6 +140,9 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
             mHistoryPresenter.listHistories();
         else
             Toast.makeText(getActivity(), "清除历史记录失败!", Toast.LENGTH_SHORT).show();
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
     }
 
 //=============IHistoryPresenterViewCallback end====================================================
@@ -156,15 +157,13 @@ public class HistoryFragment extends BaseFragment implements IHistoryPresenterVi
 
     @Override
     public void onConfirmClick(boolean isCheck) {
+        LogUtil.d(TAG,"isCheck: " + isCheck);
         if (isCheck) {
             mHistoryPresenter.cleanHistories();
         } else {
             mHistoryPresenter.delHistory(mCurrentTrack);
         }
 
-        if (mDialog != null) {
-            mDialog.dismiss();
-        }
     }
 //=============OnDialogActionClickListener end======================================================
 }

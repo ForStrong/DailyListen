@@ -3,6 +3,7 @@ package com.ianf.dailylisten.Presenters;
 import android.widget.Toast;
 
 import com.ianf.dailylisten.base.BaseApplication;
+import com.ianf.dailylisten.interfaces.IHistoryPresenterViewCallback;
 import com.ianf.dailylisten.interfaces.IPlayerPresenter;
 import com.ianf.dailylisten.interfaces.IPlayerViewCallback;
 import com.ianf.dailylisten.utils.Constants;
@@ -287,6 +288,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         LogUtil.d(TAG,"onSoundSwitch...");
         if (curModel instanceof Track){
             mCurrentTrack = (Track) curModel;
+            HistoryPresenter.getInstance().addHistory(mCurrentTrack);
             for (IPlayerViewCallback callback : mCallbackList) {
                 callback.onSoundSwitch(mCurrentTrack,mCurrentIndex);
             }
@@ -324,7 +326,8 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         LogUtil.d(TAG,"onError...e -- >" + e);
         return false;
     }
-    //======================================播放器播放状态 end========================================
+//======================================播放器播放状态 end========================================
+
 
 
 }
